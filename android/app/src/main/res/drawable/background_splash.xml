@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+<!-- tela de fundo, background-->
+
+<!-- <item
+   android:drawable="@mipmap/screen"
+    android:gravity="fill"
+/>-->
+
+<item
+   android:drawable="@color/primary"/>
+
+<!-- Logo -->
+ <item
+        android:width="260dp"
+        android:height="260dp"
+        android:drawable="@drawable/icon"
+        android:gravity="center"
+        />
+
+<!-- icon_text e a logo-->
+
+<!-- Logo -->
+ <item
+        android:width="260dp"
+        android:height="260dp"
+        android:drawable="@drawable/icon"
+        android:gravity="center"
+        />
+
+
+</layer-list>
+
+
+
+
+
+
