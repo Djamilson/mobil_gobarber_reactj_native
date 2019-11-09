@@ -45,7 +45,7 @@ export default function Confirm({navigation}) {
         />
         <Name>{provider.name}</Name>
         <Time>{dateFormatted}</Time>
-        <SubmitButton onPress={handleAddAppointment}>
+        <SubmitButton loading={false} onPress={handleAddAppointment}>
           Confirmar Agendamento
         </SubmitButton>
       </Container>

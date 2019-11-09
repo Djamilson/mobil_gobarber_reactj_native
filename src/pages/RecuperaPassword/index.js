@@ -32,12 +32,11 @@ export default function ResetPassword({navigation}) {
           `Foi enviado instruções de recuperação de senha, para o email ${email}, acesse para criar nova senha!`
         );
       })
-      .catch(err => {
-        const {stack} = err;
+      .catch(error => {
+        const str = error.toString();
+        const final = str.replace(/\D/g, '');
 
-        const finall = stack.split('status code ')[1].substring(0, 3);
-
-        if (finall === '401' || finall === '403') {
+        if (final === '401' || final === '403') {
           Alert.alert(
             'Error',
             'Não foi possível encontra um usuário, crie sua conta!'

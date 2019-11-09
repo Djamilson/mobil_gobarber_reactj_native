@@ -1,18 +1,30 @@
 import React, {useEffect, useState} from 'react';
+import {useDispatch} from 'react-redux';
+import {TouchableOpacity, Alert} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import {withNavigationFocus} from 'react-navigation';
-import {Alert} from 'react-native';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import IconFontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
+import {withNavigationFocus} from 'react-navigation';
 import PropTypes from 'prop-types';
+import Modal from '~/components/Modal';
+
+import {signOut} from '~/store/modules/auth/actions';
 import api from '~/services/api';
 
 import Background from '~/components/Background';
 import Appointment from '~/components/Appointment';
 
-import {Container, Title, List} from './styles';
+import {Container, Heder, Title, Icons, List} from './styles';
 
 function Dashboard({isFocused}) {
+  const dispatch = useDispatch();
   const [appointments, setAppointments] = useState([]);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  function toggleModal() {
+    setIsModalVisible(!isModalVisible);
+  }
 
   async function loadAppointments() {
     const response = await api.get('appointments');
@@ -56,10 +68,35 @@ function Dashboard({isFocused}) {
     );
   }
 
+  function handleLogout() {
+    dispatch(signOut());
+  }
+
   return (
     <Background>
       <Container>
-        <Title>Agendamento</Title>
+        <Heder>
+          <Title>Agendamento</Title>
+
+          <Icons>
+            <TouchableOpacity onPress={toggleModal}>
+              <IconFontAwesome5
+                name="sign-out-alt"
+                size={26}
+                color="rgba(255, 255, 255, 0.6)"
+              />
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={handleLogout}>
+              <FontAwesome
+                name="gear"
+                size={26}
+                color="rgba(255, 255, 255, 0.6)"
+              />
+            </TouchableOpacity>
+          </Icons>
+        </Heder>
+
         <List
           data={appointments}
           keyExtractor={item => String(item.id)}
@@ -71,6 +108,12 @@ function Dashboard({isFocused}) {
           )}
         />
       </Container>
+      <Modal
+        toggleModal={toggleModal}
+        handleLogout={handleLogout}
+        isModalVisible={isModalVisible}>
+        Tem certeza que deseja sair do Gobarber?
+      </Modal>
     </Background>
   );
 }

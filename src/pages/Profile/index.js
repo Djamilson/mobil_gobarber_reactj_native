@@ -123,6 +123,7 @@ export default function Profile() {
 }
 
 Profile.navigationOptions = {
+  // eslint-disable-next-line react/prop-types
   tabBarIcon: ({tintColor}) => (
     <Icon name="person" size={20} color={tintColor} />
   ),
