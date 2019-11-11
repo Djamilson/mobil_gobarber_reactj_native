@@ -85,12 +85,13 @@ export function* signIn({payload}) {
 
 export function* signUp({payload}) {
   try {
-    const {name, email, password, resetForm} = payload;
+    const {name, email, password, privacy, resetForm} = payload;
 
     yield call(api.post, 'usersmobil', {
       name,
       email,
       password,
+      privacy,
     });
 
     resetForm();
