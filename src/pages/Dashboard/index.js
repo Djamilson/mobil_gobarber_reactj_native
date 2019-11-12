@@ -9,6 +9,8 @@ import {withNavigationFocus} from 'react-navigation';
 import PropTypes from 'prop-types';
 import Modal from '~/components/Modal';
 
+import TermosCondicoes from '~/components/TermosCondicoes';
+
 import {signOut} from '~/store/modules/auth/actions';
 import api from '~/services/api';
 
@@ -21,6 +23,12 @@ function Dashboard({isFocused}) {
   const dispatch = useDispatch();
   const [appointments, setAppointments] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const [isModalVisiblePrivacy, setIsModalVisiblePrivacy] = useState(false);
+
+  function toggleModalPrivacy() {
+    setIsModalVisiblePrivacy(!isModalVisiblePrivacy);
+  }
 
   function toggleModal() {
     setIsModalVisible(!isModalVisible);
@@ -87,7 +95,7 @@ function Dashboard({isFocused}) {
               />
             </TouchableOpacity>
 
-            <TouchableOpacity onPress={handleLogout}>
+            <TouchableOpacity onPress={toggleModalPrivacy}>
               <FontAwesome
                 name="gear"
                 size={26}
@@ -114,6 +122,11 @@ function Dashboard({isFocused}) {
         isModalVisible={isModalVisible}>
         Tem certeza que deseja sair do Gobarber?
       </Modal>
+
+      <TermosCondicoes
+        toggleModal={toggleModalPrivacy}
+        isModalVisible={isModalVisiblePrivacy}
+      />
     </Background>
   );
 }

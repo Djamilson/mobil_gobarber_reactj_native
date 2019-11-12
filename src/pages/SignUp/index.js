@@ -1,12 +1,14 @@
 import React, {useRef, useState} from 'react';
 import PropTypes from 'prop-types';
 import {useDispatch, useSelector} from 'react-redux';
+import {TouchableOpacity, Image} from 'react-native';
 
-import {Image} from 'react-native';
 import logo from '~/assets/logo.png';
+import TermosCondicoes from '~/components/TermosCondicoes';
 
 import Background from '~/components/Background';
 import {signUpRequest} from '~/store/modules/auth/actions';
+import CheckBox from '~/components/CheckBox';
 
 import {
   Container,
@@ -28,6 +30,17 @@ export default function SignUp({navigation}) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [privacy, setPrivacy] = useState(false);
+
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  function toggleModal() {
+    setIsModalVisible(!isModalVisible);
+  }
+
+  function handleCheckBox() {
+    setPrivacy(!privacy);
+  }
 
   function resetForm() {
     setName('');
@@ -37,7 +50,7 @@ export default function SignUp({navigation}) {
   }
 
   function handleSubmit() {
-    dispatch(signUpRequest(name, email, password, () => resetForm()));
+    dispatch(signUpRequest(name, email, password, privacy, () => resetForm()));
   }
 
   return (
@@ -80,13 +93,30 @@ export default function SignUp({navigation}) {
             onChangeText={setPassword}
           />
 
-          <SubmitButton loading={loading} onPress={handleSubmit}>
-            Criar
-          </SubmitButton>
+          <CheckBox
+            selected={privacy}
+            onPress={handleCheckBox}
+            text="Aceita os termos e condições?"
+          />
+
+          {privacy ? (
+            <SubmitButton loading={loading} onPress={handleSubmit}>
+              Criar
+            </SubmitButton>
+          ) : (
+            <TouchableOpacity onPress={toggleModal}>
+              <SignLinkText>Termos aqui!</SignLinkText>
+            </TouchableOpacity>
+          )}
         </Form>
         <SignLink onPress={() => navigation.navigate('SignIn')}>
           <SignLinkText>Já tenho conta</SignLinkText>
         </SignLink>
+
+        <TermosCondicoes
+          toggleModal={toggleModal}
+          isModalVisible={isModalVisible}
+        />
       </Container>
     </Background>
   );
