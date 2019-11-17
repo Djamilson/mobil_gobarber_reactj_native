@@ -4,12 +4,11 @@ export const Container = styled.SafeAreaView`
   flex: 1;
 `;
 export const Heder = styled.View`
-  fex: 1;
   align-self: center;
   align-content: space-between;
   align-items: center;
   flex-direction: row;
-  border: solid 2px #000;
+  max-height: 50px;
 `;
 
 export const Icons = styled.View`
@@ -18,7 +17,7 @@ export const Icons = styled.View`
   justify-content: space-between;
   align-items: flex-start;
   flex-direction: row;
-  margin-top: 35px;
+  margin-top: 30px;
   margin-left: 20px;
   max-width: 90px;
 `;
@@ -28,10 +27,8 @@ export const Title = styled.Text`
   color: #fff;
   font-weight: bold;
   align-self: center;
-  margin-top: 30px;
+  margin-top: 25px;
   padding-right: 50px;
-
-  border: solid 2px #000;
 `;
 
 export const List = styled.FlatList.attrs({

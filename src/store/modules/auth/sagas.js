@@ -101,9 +101,6 @@ export function* signUp({payload}) {
       `Cadastro efetuado, acesse o email ${email} para a tivar sua conta!`
     );
     yield put(signUpSuccess());
-    //  yield put(NavigationActions.navigate('SignIn'));
-
-    //    history.push('/dashboard');
   } catch (error) {
     const str = error.toString();
     const final = str.replace(/\D/g, '');

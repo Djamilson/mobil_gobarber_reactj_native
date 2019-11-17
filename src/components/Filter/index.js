@@ -1,4 +1,4 @@
-import React, {forwardRef, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import PropTypes from 'prop-types';
 import RNPickerSelect from 'react-native-picker-select';
@@ -7,20 +7,16 @@ import api from '~/services/api';
 
 import {ITFilter} from './styles';
 
-function Filter({style, icon, onChange}) {
+function Filter({style, onChange}) {
   const [company, setCompany] = useState([]);
 
   async function loadAvailable() {
-    console.log('====>>>');
-
     const response = await api.get(`empresas`);
-    console.log('====>>>', response.data);
+
     const data = response.data.map(comp => ({
       label: comp.name,
       value: comp.id,
     }));
-
-    console.log('====>>>', data);
     setCompany(data);
   }
 
@@ -29,11 +25,9 @@ function Filter({style, icon, onChange}) {
   }, []);
 
   async function handleSelectProvider(value) {
-    console.log('Rum:', value);
-
     const response = await api.get(`users/${value}`);
-    console.log('====>>>', response.data);
-     onChange(response.data);
+
+    onChange(response.data);
   }
 
   return (
@@ -98,11 +92,10 @@ function Filter({style, icon, onChange}) {
 }
 
 Filter.propTypes = {
-  icon: PropTypes.string,
   style: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
   onChange: PropTypes.func.isRequired,
 };
 
-Filter.defaultProps = {icon: null, style: {}};
+Filter.defaultProps = {style: {}};
 
 export default Filter;
