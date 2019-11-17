@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import RNPickerSelect from 'react-native-picker-select';
 
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import IconGroupButton from 'react-native-vector-icons/FontAwesome';
 
 import Background from '~/components/Background';
 
@@ -19,12 +20,17 @@ import {
   Avatar,
   Name,
   Title,
+  Text,
+  GroupButton,
+  ButtonPresencial,
+  ButtonAgendar,
 } from './styles';
 
 export default function SelectProvider({navigation}) {
   const [providers, setProviders] = useState([]);
   const [company, setCompany] = useState([]);
   const [companySelect, setCompanySelect] = useState({});
+  const [optionAgendar, setOptionAgendar] = useState(false);
 
   async function loadCompany() {
     const response = await api.get(`empresas`);
@@ -41,6 +47,24 @@ export default function SelectProvider({navigation}) {
   async function loadProvider() {
     const response = await api.get('providers');
     setProviders(response.data);
+  }
+
+  function selectoptionAgendar() {
+    setOptionAgendar(!optionAgendar);
+  }
+
+  function handleSelectHour(provider) {
+    if (optionAgendar) {
+      const data = new Date();
+      const data2 = new Date(data.valueOf() - data.getTimezoneOffset() * 60000);
+      const time = data2.toISOString().replace(/\.\d{3}Z$/, '');
+
+      return navigation.navigate('Confirm', {
+        provider,
+        time,
+      });
+    }
+    return navigation.navigate('SelectDateTime', {provider});
   }
 
   useEffect(() => {
@@ -119,6 +143,25 @@ export default function SelectProvider({navigation}) {
 
           <Icon name="search" size={30} color="#FFF" />
         </Filter>
+        <GroupButton>
+          <ButtonAgendar
+            onPress={() => selectoptionAgendar()}
+            disabled={optionAgendar}>
+            {optionAgendar ? (
+              <IconGroupButton name="thumbs-o-up" size={30} color="#FFF" />
+            ) : null}
+
+            <Text>Presencial</Text>
+          </ButtonAgendar>
+          <ButtonPresencial
+            onPress={() => selectoptionAgendar()}
+            disabled={!optionAgendar}>
+            {optionAgendar ? null : (
+              <IconGroupButton name="thumbs-o-up" size={30} color="#FFF" />
+            )}
+            <Text>Reservar {optionAgendar}</Text>
+          </ButtonPresencial>
+        </GroupButton>
 
         {companySelect.logo ? (
           <ContainerLogo>
@@ -135,8 +178,7 @@ export default function SelectProvider({navigation}) {
           data={providers}
           keyExtractor={provider => String(provider.id)}
           renderItem={({item: provider}) => (
-            <Provider
-              onPress={() => navigation.navigate('SelectDateTime', {provider})}>
+            <Provider onPress={() => handleSelectHour(provider)}>
               <Avatar
                 source={{
                   uri: provider.avatar

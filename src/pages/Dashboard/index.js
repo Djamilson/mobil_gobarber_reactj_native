@@ -23,7 +23,6 @@ function Dashboard({isFocused}) {
   const dispatch = useDispatch();
   const [appointments, setAppointments] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
-
   const [isModalVisiblePrivacy, setIsModalVisiblePrivacy] = useState(false);
 
   function toggleModalPrivacy() {
@@ -34,8 +33,10 @@ function Dashboard({isFocused}) {
     setIsModalVisible(!isModalVisible);
   }
 
-  async function loadAppointments() {
-    const response = await api.get('appointments');
+  async function loadAppointments(page = 1) {
+    const response = await api.get(`appointments?page=${page}`);
+    console.log('Entrou no laaço:', response);
+
     setAppointments(response.data);
   }
 
@@ -43,7 +44,7 @@ function Dashboard({isFocused}) {
     if (isFocused) {
       loadAppointments();
     }
-  }, [isFocused]);
+  }, [isFocused, loadAppointments]);
 
   async function handleCancel(id) {
     const response = await api.delete(`appointments/${id}`);

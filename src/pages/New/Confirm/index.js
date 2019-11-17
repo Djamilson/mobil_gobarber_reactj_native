@@ -16,6 +16,9 @@ export default function Confirm({navigation}) {
   const provider = navigation.getParam('provider');
   const time = navigation.getParam('time');
 
+  console.log('Provider :: ', provider);
+  console.log('time :: ', time);
+
   const dateFormatted = useMemo(
     () =>
       formatRelative(parseISO(time), new Date(), {
@@ -54,7 +57,7 @@ export default function Confirm({navigation}) {
 }
 
 Confirm.navigationOptions = ({navigation}) => ({
-  title: 'Confrimar Agendamento',
+  title: 'Confirmar Agendamento',
   headerLeft: () => (
     <TouchableOpacity
       onPress={() => {
