@@ -84,7 +84,6 @@ export const ButtonPresencial = styled.TouchableOpacity`
   flex-direction: row;
 
   background: #c37dc6;
-  margin-left: 20px;
   border-radius: 5px;
   height: 46px;
   align-items: center;
@@ -97,6 +96,7 @@ export const ButtonAgendar = styled.TouchableOpacity`
 
   background: #27ddc5;
   border-radius: 5px;
+  margin-left: 15px;
   height: 46px;
   min-width: 155px;
   align-items: center;

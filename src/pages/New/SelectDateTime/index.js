@@ -15,6 +15,10 @@ export default function SelectDateTime({navigation}) {
   const [hours, setHours] = useState([]);
 
   const provider = navigation.getParam('provider');
+  const router = navigation.getParam('router');
+  console.log('Provider :: ', provider);
+  console.log('Provider :: ', provider.id);
+  console.log('router :: ', router);
 
   useEffect(() => {
     async function loadAvailable() {
@@ -26,12 +30,14 @@ export default function SelectDateTime({navigation}) {
       setHours(response.data);
     }
     loadAvailable();
-  }, [date, hours, provider.id]);
+    // [date, hours, provider.id]
+  }, [date, provider.id]);
 
   function handleSelectHour(time) {
     navigation.navigate('Confirm', {
       provider,
       time,
+      router,
     });
   }
 

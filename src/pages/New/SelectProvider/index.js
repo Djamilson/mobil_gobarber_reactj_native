@@ -7,8 +7,9 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import IconGroupButton from 'react-native-vector-icons/FontAwesome';
 
 import Background from '~/components/Background';
-
 import api from '~/services/api';
+
+import enumAppointments from '~/enum/appointments';
 
 import {
   Container,
@@ -31,6 +32,8 @@ export default function SelectProvider({navigation}) {
   const [company, setCompany] = useState([]);
   const [companySelect, setCompanySelect] = useState({});
   const [optionAgendar, setOptionAgendar] = useState(false);
+  const routerPresencial = 'appointments/presencial';
+  const routerAgendar = 'appointments';
 
   async function loadCompany() {
     const response = await api.get(`empresas`);
@@ -53,18 +56,33 @@ export default function SelectProvider({navigation}) {
     setOptionAgendar(!optionAgendar);
   }
 
-  function handleSelectHour(provider) {
-    if (optionAgendar) {
+  function handleSelectHour(provider_ent) {
+    const provider = {
+      ...provider_ent,
+      status: enumAppointments.aguardando,
+      agendar: optionAgendar,
+    };
+
+    if (!optionAgendar) {
+      const newprovider = {
+        ...provider_ent,
+        status: enumAppointments.aguardando,
+        agendar: optionAgendar,
+      };
       const data = new Date();
       const data2 = new Date(data.valueOf() - data.getTimezoneOffset() * 60000);
       const time = data2.toISOString().replace(/\.\d{3}Z$/, '');
 
       return navigation.navigate('Confirm', {
-        provider,
+        provider: newprovider,
         time,
+        router: routerAgendar,
       });
     }
-    return navigation.navigate('SelectDateTime', {provider});
+    return navigation.navigate('SelectDateTime', {
+      provider,
+      router: routerAgendar,
+    });
   }
 
   useEffect(() => {
@@ -89,7 +107,7 @@ export default function SelectProvider({navigation}) {
         <Filter>
           <RNPickerSelect
             placeholder={{
-              label: 'Filtro a...',
+              label: 'Busca Salão...',
               value: null,
             }}
             onValueChange={handleSelectProvider}
@@ -144,6 +162,14 @@ export default function SelectProvider({navigation}) {
           <Icon name="search" size={30} color="#FFF" />
         </Filter>
         <GroupButton>
+          <ButtonPresencial
+            onPress={() => selectoptionAgendar()}
+            disabled={!optionAgendar}>
+            {optionAgendar ? null : (
+              <IconGroupButton name="thumbs-o-up" size={30} color="#FFF" />
+            )}
+            <Text>Entra na Fila</Text>
+          </ButtonPresencial>
           <ButtonAgendar
             onPress={() => selectoptionAgendar()}
             disabled={optionAgendar}>
@@ -151,16 +177,8 @@ export default function SelectProvider({navigation}) {
               <IconGroupButton name="thumbs-o-up" size={30} color="#FFF" />
             ) : null}
 
-            <Text>Presencial</Text>
+            <Text>Agendar</Text>
           </ButtonAgendar>
-          <ButtonPresencial
-            onPress={() => selectoptionAgendar()}
-            disabled={!optionAgendar}>
-            {optionAgendar ? null : (
-              <IconGroupButton name="thumbs-o-up" size={30} color="#FFF" />
-            )}
-            <Text>Reservar {optionAgendar}</Text>
-          </ButtonPresencial>
         </GroupButton>
 
         {companySelect.logo ? (
