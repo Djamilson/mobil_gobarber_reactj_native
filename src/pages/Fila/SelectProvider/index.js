@@ -4,12 +4,9 @@ import PropTypes from 'prop-types';
 import RNPickerSelect from 'react-native-picker-select';
 
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import IconGroupButton from 'react-native-vector-icons/FontAwesome';
 
 import Background from '~/components/Background';
 import api from '~/services/api';
-
-import enumAppointments from '~/enum/appointments';
 
 import {
   Container,
@@ -21,19 +18,12 @@ import {
   Avatar,
   Name,
   Title,
-  Text,
-  GroupButton,
-  ButtonPresencial,
-  ButtonAgendar,
 } from './styles';
 
 export default function SelectProvider({navigation}) {
   const [providers, setProviders] = useState([]);
   const [company, setCompany] = useState([]);
   const [companySelect, setCompanySelect] = useState({});
-  const [optionAgendar, setOptionAgendar] = useState(false);
-  const routerPresencial = 'appointments/presencial';
-  const routerAgendar = 'appointments';
 
   async function loadCompany() {
     const response = await api.get(`empresas`);
@@ -52,42 +42,8 @@ export default function SelectProvider({navigation}) {
     setProviders(response.data);
   }
 
-  function selectoptionAgendar() {
-    setOptionAgendar(!optionAgendar);
-  }
-
-  function handleSelectHour(provider_ent) {
-    const provider = {
-      ...provider_ent,
-      status: enumAppointments.aguardando,
-      agendar: optionAgendar,
-    };
-
-    if (!optionAgendar) {
-      const newprovider = {
-        ...provider_ent,
-        status: enumAppointments.aguardando,
-        agendar: optionAgendar,
-      };
-
-      const data = new Date();
-      const data2 = new Date(data.valueOf() - data.getTimezoneOffset() * 60000);
-      const time = data2.toISOString().replace(/\.\d{3}Z$/, '');
-
-      console.log('data:', data);
-      console.log('data2:', data2);
-      console.log('Meu Time:', time);
-
-      return navigation.navigate('Confirm', {
-        provider: newprovider,
-        time,
-        router: routerAgendar,
-      });
-    }
-    return navigation.navigate('SelectDateTime', {
-      provider,
-      router: routerAgendar,
-    });
+  function handleNavSelectList(provider) {
+    return navigation.navigate('FilaUser', {provider});
   }
 
   useEffect(() => {
@@ -166,25 +122,6 @@ export default function SelectProvider({navigation}) {
 
           <Icon name="search" size={30} color="#FFF" />
         </Filter>
-        <GroupButton>
-          <ButtonPresencial
-            onPress={() => selectoptionAgendar()}
-            disabled={!optionAgendar}>
-            {optionAgendar ? null : (
-              <IconGroupButton name="thumbs-o-up" size={30} color="#FFF" />
-            )}
-            <Text>Entra na Fila</Text>
-          </ButtonPresencial>
-          <ButtonAgendar
-            onPress={() => selectoptionAgendar()}
-            disabled={optionAgendar}>
-            {optionAgendar ? (
-              <IconGroupButton name="thumbs-o-up" size={30} color="#FFF" />
-            ) : null}
-
-            <Text>Agendar</Text>
-          </ButtonAgendar>
-        </GroupButton>
 
         {companySelect.logo ? (
           <ContainerLogo>
@@ -201,7 +138,7 @@ export default function SelectProvider({navigation}) {
           data={providers}
           keyExtractor={provider => String(provider.id)}
           renderItem={({item: provider}) => (
-            <Provider onPress={() => handleSelectHour(provider)}>
+            <Provider onPress={() => handleNavSelectList(provider)}>
               <Avatar
                 source={{
                   uri: provider.avatar

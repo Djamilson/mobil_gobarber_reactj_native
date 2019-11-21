@@ -31,6 +31,7 @@ export default function Confirm({navigation}) {
   );
 
   async function handleAddAppointment() {
+    console.log('Agora sim: vou inserir: ', time);
     await api
       .post(router, {
         provider_id: id,
@@ -43,7 +44,7 @@ export default function Confirm({navigation}) {
         console.log('EEERRROU:::', error);
       });
 
-   // navigation.navigate('Dashboard');
+    navigation.navigate('Dashboard');
   }
 
   return (
