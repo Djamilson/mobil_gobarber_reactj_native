@@ -15,16 +15,6 @@ export const Heder = styled.View`
   padding: 35px;
 `;
 
-export const Icons = styled.View`
-  flex: 1;
-  align-content: center;
-  justify-content: space-between;
-  align-items: flex-start;
-  flex-direction: row;
-  margin-left: 60px;
-  max-width: 90px;
-`;
-
 export const Title = styled.Text`
   font-size: 20px;
   color: #fff;

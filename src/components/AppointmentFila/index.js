@@ -1,7 +1,5 @@
-import React, {useMemo} from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
-import {parseISO, formatRelative} from 'date-fns';
-import pt from 'date-fns/locale/pt';
 import {TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
@@ -13,17 +11,12 @@ import {
   InfoStatus,
   StatusLabel,
   Status,
-  Time,
+  StatusText,
   Name,
+  InfoStatusChamada,
 } from './styles';
 
-export default function Appointment({data, onCancel}) {
-  const dateParsed = useMemo(() => {
-    return formatRelative(parseISO(data.date), new Date(), {
-      locale: pt,
-      addSuffix: true,
-    });
-  }, [data.date]);
+export default function AppointmentFila({data, onCancel}) {
   return (
     <Container past={data.past} agendar={Boolean(data.agendar)}>
       <Left>
@@ -35,12 +28,20 @@ export default function Appointment({data, onCancel}) {
           }}
         />
         <Info>
-          <Name> {data.provider.name}</Name>
           <InfoStatus>
-            <StatusLabel>Status</StatusLabel>
-            <Status> {data.status}</Status>
+            <StatusLabel>Atendente:</StatusLabel>
+            <Name> {data.provider.name}</Name>
           </InfoStatus>
-          <Time>{dateParsed}</Time>
+
+          <InfoStatus>
+            <StatusLabel>Status:</StatusLabel>
+            <Status>{data.status}</Status>
+          </InfoStatus>
+          <InfoStatusChamada>
+            <StatusLabel>Você é o:</StatusLabel>
+            <StatusText>{data.index}º</StatusText>
+            <StatusLabel>da fila</StatusLabel>
+          </InfoStatusChamada>
         </Info>
       </Left>
       {data.cancelable && !data.canceled_at && (
@@ -52,8 +53,9 @@ export default function Appointment({data, onCancel}) {
   );
 }
 
-Appointment.propTypes = {
+AppointmentFila.propTypes = {
   data: PropTypes.shape({
+    index: PropTypes.number,
     provider: PropTypes.object,
     cancelable: PropTypes.bool,
     date: PropTypes.string,

@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from 'react';
 import {useDispatch} from 'react-redux';
 import {TouchableOpacity, Alert} from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import IconFontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import IconMa from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import {withNavigationFocus} from 'react-navigation';
 import PropTypes from 'prop-types';
@@ -15,11 +15,11 @@ import {signOut} from '~/store/modules/auth/actions';
 import api from '~/services/api';
 
 import Background from '~/components/Background';
-import Appointment from '~/components/Appointment';
+import AppointmentFila from '~/components/AppointmentFila';
 
 import {Container, Heder, Title, Icons, List} from './styles';
 
-function Dashboard({isFocused}) {
+function Fila({isFocused}) {
   const dispatch = useDispatch();
   const [appointments, setAppointments] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -34,8 +34,8 @@ function Dashboard({isFocused}) {
   }
 
   async function loadAppointments(page = 1) {
-    const response = await api.get(`appointments?page=${page}`);
-
+    const response = await api.get(`appointmentsfila?page=${page}`);
+    console.log('Fila:', response.data);
     setAppointments(response.data);
   }
 
@@ -43,7 +43,7 @@ function Dashboard({isFocused}) {
     if (isFocused) {
       loadAppointments();
     }
-  }, [isFocused, loadAppointments]);
+  }, [isFocused]);
 
   async function handleCancel(id) {
     const response = await api.delete(`appointments/${id}`);
@@ -84,7 +84,7 @@ function Dashboard({isFocused}) {
     <Background>
       <Container>
         <Heder>
-          <Title>Agendamento</Title>
+          <Title>Fila de clientes presentes</Title>
 
           <Icons>
             <TouchableOpacity onPress={toggleModal}>
@@ -109,7 +109,7 @@ function Dashboard({isFocused}) {
           data={appointments}
           keyExtractor={item => String(item.id)}
           renderItem={({item}) => (
-            <Appointment
+            <AppointmentFila
               onCancel={() => handleChamaCancel(item.id)}
               data={item}
             />
@@ -132,20 +132,20 @@ function Dashboard({isFocused}) {
 }
 
 function TabBarIcon({tintColor}) {
-  return <Icon name="event" size={20} color={tintColor} />;
+  return <IconMa name="hail" size={20} color={tintColor} />;
 }
 
 TabBarIcon.propTypes = {
   tintColor: PropTypes.string.isRequired,
 };
 
-Dashboard.navigationOptions = {
-  tabBarLabel: 'Agendamentos',
+Fila.navigationOptions = {
+  tabBarLabel: 'Fila',
   tabBarIcon: TabBarIcon,
 };
 
-Dashboard.propTypes = {
+Fila.propTypes = {
   isFocused: PropTypes.bool.isRequired,
 };
 
-export default withNavigationFocus(Dashboard);
+export default withNavigationFocus(Fila);

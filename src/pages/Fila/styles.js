@@ -21,7 +21,7 @@ export const Icons = styled.View`
   justify-content: space-between;
   align-items: flex-start;
   flex-direction: row;
-  margin-left: 60px;
+  margin-left: 30px;
   max-width: 90px;
 `;
 

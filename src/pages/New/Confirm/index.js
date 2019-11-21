@@ -13,11 +13,14 @@ import Background from '~/components/Background';
 import {Container, Avatar, Name, Time, SubmitButton} from './styles';
 
 export default function Confirm({navigation}) {
-  const provider = navigation.getParam('provider');
-  const time = navigation.getParam('time');
+  const {id, status, agendar, name, avatar} = navigation.getParam('provider');
 
-  console.log('Provider :: ', provider);
-  console.log('time :: ', time);
+  const time = navigation.getParam('time');
+  const router = navigation.getParam('router');
+
+  console.log('ID Provider :: ', id);
+  console.log('Vou confirmar agora time :: ', time);
+  console.log('Vou confirmar agora router :: ', router);
 
   const dateFormatted = useMemo(
     () =>
@@ -28,10 +31,18 @@ export default function Confirm({navigation}) {
   );
 
   async function handleAddAppointment() {
-    await api.post('appointments', {
-      provider_id: provider.id,
-      date: time,
-    });
+    console.log('Agora sim: vou inserir: ', time);
+    await api
+      .post(router, {
+        provider_id: id,
+        date: time,
+        status,
+        agendar,
+      })
+      .catch(error => {
+        // Your error is here!
+        console.log('EEERRROU:::', error);
+      });
 
     navigation.navigate('Dashboard');
   }
@@ -41,12 +52,12 @@ export default function Confirm({navigation}) {
       <Container>
         <Avatar
           source={{
-            uri: provider.avatar
-              ? provider.avatar.url
-              : `https://api.adorable.io/avatar/50/${provider.name}.png`,
+            uri: avatar
+              ? avatar.url
+              : `https://api.adorable.io/avatar/50/${name}.png`,
           }}
         />
-        <Name>{provider.name}</Name>
+        <Name>{name}</Name>
         <Time>{dateFormatted}</Time>
         <SubmitButton loading={false} onPress={handleAddAppointment}>
           Confirmar Agendamento
