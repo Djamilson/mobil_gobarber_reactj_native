@@ -21,7 +21,7 @@ export const Icons = styled.View`
   justify-content: space-between;
   align-items: flex-start;
   flex-direction: row;
-  margin-left: 60px;
+  margin-left: 10px;
   max-width: 90px;
 `;
 
@@ -35,5 +35,5 @@ export const Title = styled.Text`
 
 export const List = styled.FlatList.attrs({
   showsVerticalScrollIndicator: false,
-  contentContainerStyle: {padding: 30},
+  contentContainerStyle: {padding: 15},
 })``;

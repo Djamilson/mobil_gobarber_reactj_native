@@ -17,14 +17,14 @@ export default function FilaUser({navigation}) {
   const [appointments, setAppointments] = useState([]);
 
   const provider = navigation.getParam('provider');
-  const router = navigation.getParam('router');
+ 
 
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isModalVisiblePrivacy, setIsModalVisiblePrivacy] = useState(false);
 
   console.log('Provider :: ', provider);
   console.log('Provider :: ', provider.id);
-  console.log('router :: ', router);
+
 
   useEffect(() => {
     async function loadAppointments(page = 1) {

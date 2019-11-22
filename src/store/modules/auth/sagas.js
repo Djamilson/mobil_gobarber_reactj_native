@@ -17,7 +17,7 @@ export function* signIn({payload}) {
 
     const {token, user} = response.data;
 
-    if (user.provider) {
+    /* if (user.provider) {
       Alert.alert(
         'Erro no login',
         'Usuário é prestador de serviço, acessa a opção web!'
@@ -25,7 +25,7 @@ export function* signIn({payload}) {
 
       yield put(signFailure());
       return;
-    }
+    } */
 
     api.defaults.headers.Authorization = ` Bearer ${token}`;
 
@@ -35,6 +35,9 @@ export function* signIn({payload}) {
   } catch (error) {
     const str = error.toString();
     const final = str.replace(/\D/g, '');
+    console.log('Meu erro: ', error);
+    console.log('Final: ', final);
+    console.log('STR: ', str);
 
     if (final === '400') {
       Alert.alert(
@@ -74,6 +77,22 @@ export function* signIn({payload}) {
         'Erro no login',
         'Usúario ou senha incorreta, verifique seus dados!'
       );
+      yield put(signFailure());
+      return;
+    }
+
+    if (final === '429') {
+      Alert.alert(
+        'Erro no login',
+        'Não foi possível conectar ao servidor, tente mais tarde!'
+      );
+      yield put(signFailure());
+      return;
+    }
+
+    if (str === 'Error: Network Error') {
+      Alert.alert('Erro no login', 'Você não está conectado à internet!');
+
       yield put(signFailure());
       return;
     }
