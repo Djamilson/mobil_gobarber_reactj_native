@@ -15,9 +15,10 @@ import {signOut} from '~/store/modules/auth/actions';
 import api from '~/services/api';
 
 import Background from '~/components/Background';
-import Appointment from '~/components/Appointment';
+import AppointmentAdmin from '~/components/AppointmentAdmin';
 
 import {Container, Heder, Title, Icons, List} from './styles';
+import statusAppointment from '~/enum/appointments';
 
 function Dashboard({isFocused}) {
   const dispatch = useDispatch();
@@ -34,8 +35,8 @@ function Dashboard({isFocused}) {
   }
 
   async function loadAppointments(page = 1) {
-    const response = await api.get(`appointments?page=${page}`);
-
+    const response = await api.get(`appointments/provider?page=${page}`);
+    console.log('Meus dados: ', response.data);
     setAppointments(response.data);
   }
 
@@ -43,10 +44,16 @@ function Dashboard({isFocused}) {
     if (isFocused) {
       loadAppointments();
     }
-  }, [isFocused, loadAppointments]);
+  }, [isFocused]);
 
   async function handleCancel(id) {
-    const response = await api.delete(`appointments/${id}`);
+    // const response = await api.delete(`appointments/${id}`);
+    const response = await api.get(`appointment/${id}/provider`, {
+      params: {
+        status: statusAppointment.cancelado,
+      },
+    });
+
     Alert.alert('Sucesso', 'Agendamento cancelado com sucesso!');
     setAppointments(
       appointments.map(appointment =>
@@ -58,6 +65,38 @@ function Dashboard({isFocused}) {
           : appointment
       )
     );
+  }
+
+  function mudaStatus(appointment_id, status) {
+    const novoStatus = appointments.map(appointment =>
+      appointment.id === appointment_id
+        ? {
+            ...appointment,
+            status,
+          }
+        : appointment
+    );
+
+    setAppointments(novoStatus);
+  }
+
+  async function onAtender(appointmentId) {
+    const response = await api.get(`appointment/${appointmentId}/provider`, {
+      params: {
+        status: statusAppointment.atendendo,
+      },
+    });
+    mudaStatus(appointmentId, response.data.status);
+  }
+
+  async function onFinally(appointmentId) {
+    const response = await api.get(`appointment/${appointmentId}/finally`, {
+      params: {
+        status: statusAppointment.finalizado,
+      },
+    });
+
+    setAppointments(response.data);
   }
 
   function handleChamaCancel(id) {
@@ -84,7 +123,7 @@ function Dashboard({isFocused}) {
     <Background>
       <Container>
         <Heder>
-          <Title>Agendamento</Title>
+          <Title>Todos agendamento de Hoje</Title>
 
           <Icons>
             <TouchableOpacity onPress={toggleModal}>
@@ -109,8 +148,10 @@ function Dashboard({isFocused}) {
           data={appointments}
           keyExtractor={item => String(item.id)}
           renderItem={({item}) => (
-            <Appointment
+            <AppointmentAdmin
               onCancel={() => handleChamaCancel(item.id)}
+              onAtender={() => onAtender(item.id)}
+              onFinally={() => onFinally(item.id)}
               data={item}
             />
           )}

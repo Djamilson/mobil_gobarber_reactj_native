@@ -49,15 +49,15 @@ export const StatusLabel = styled.Text`
   color: ${props => (props.agendar ? '#fff' : '#999')};
 `;
 
-export const Status = styled.Text`
-  font-weight: bold;
-  font-size: 14px;
-  color: #008000;
-`;
-
 export const StatusText = styled.Text`
   font-weight: bold;
   font-size: 21px;
+  color: #008000;
+`;
+
+export const Status = styled.Text`
+  font-weight: bold;
+  font-size: 14px;
   color: #008000;
 `;
 

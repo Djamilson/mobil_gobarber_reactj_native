@@ -9,11 +9,11 @@ import {
   Avatar,
   Info,
   InfoStatus,
-  StatusLabel,
-  Status,
-  StatusText,
-  Name,
   InfoStatusChamada,
+  StatusLabel,
+  StatusText,
+  Status,
+  Name,
 } from './styles';
 
 export default function AppointmentFila({data, onCancel}) {

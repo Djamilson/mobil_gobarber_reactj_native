@@ -32,7 +32,7 @@ export default function SelectProvider({navigation}) {
   const [company, setCompany] = useState([]);
   const [companySelect, setCompanySelect] = useState({});
   const [optionAgendar, setOptionAgendar] = useState(false);
-  const routerPresencial = 'appointments/presencial';
+
   const routerAgendar = 'appointments';
 
   async function loadCompany() {

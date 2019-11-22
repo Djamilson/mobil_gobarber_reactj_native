@@ -3,11 +3,27 @@ import {useSelector} from 'react-redux';
 import createRouter from './routes';
 
 export default function App() {
+  // const signed = useSelector(state => state.auth.signed, () => true);
   const signed = useSelector(state => state.auth.signed);
-  //console.log('Estou aqui:', signed);
-  //console.tron.log('Estou aqui:', signed);
 
-  const Routes = createRouter(signed);
+  // const state_ = useSelector(states => states);
+
+  // const provider = false;
+  const provider = useSelector(s =>
+    s !== undefined &&
+    s !== null &&
+    s.user.profile !== null &&
+    s.user.profile.provider === true
+      ? s.user.profile.provider
+      : false
+  );
+
+  console.log('Provider::: HUUUM', provider);
+  // console.log('Usuário: ', state_);
+  // console.log('Estou aqui:', signed);
+  // console.tron.log('Estou aqui:', signed);
+
+  const Routes = createRouter(signed, provider);
 
   return <Routes />;
 }
