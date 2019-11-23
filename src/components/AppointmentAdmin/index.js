@@ -2,7 +2,6 @@ import React, {useMemo} from 'react';
 import PropTypes from 'prop-types';
 import {parseISO, formatRelative} from 'date-fns';
 import pt from 'date-fns/locale/pt';
-import {TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import enumAppointment from '~/enum/appointments';
@@ -63,33 +62,28 @@ export default function AppointmentAdmin({
           )}
 
           <StatusLabel>Ordem de chamada:</StatusLabel>
-          {data.status === enumAppointment.atendendo ? (
+          {data.status === enumAppointment.atendendo && (
             <InfoStatusChamada>
               <StatusText>{enumAppointment.atendendo}</StatusText>
             </InfoStatusChamada>
-          ) : null}
+          )}
 
-          {data.index === 0 && data.status !== enumAppointment.atendendo ? (
+          {data.index === 0 && data.status !== enumAppointment.atendendo && (
             <InfoStatusChamada>
               <StatusText>Próximo</StatusText>
             </InfoStatusChamada>
-          ) : null}
+          )}
 
-          {data.index !== 0 && data.status !== enumAppointment.atendendo ? (
+          {data.index !== 0 && data.status !== enumAppointment.atendendo && (
             <InfoStatusChamada>
               <StatusText>{data.index}º</StatusText>
               <StatusLabelFila>da fila</StatusLabelFila>
             </InfoStatusChamada>
-          ) : null}
+          )}
 
           <Time>Agendado {dateParsed}</Time>
         </Info>
       </Left>
-      {data.cancelable && !data.canceled_at && (
-        <TouchableOpacity onPress={onCancel}>
-          <Icon name="event-busy" size={20} color="#f64c75" />
-        </TouchableOpacity>
-      )}
       <ContainerButton>
         {data.status === enumAppointment.atendendo ? (
           <FinalityButton onPress={onFinally}>
@@ -102,10 +96,12 @@ export default function AppointmentAdmin({
             <Icon name="check" size={20} color="#fff" />
           </AtendendoButton>
         )}
-        <CancelButton onPress={onCancel}>
-          <TextButton>Cancelar</TextButton>
-          <Icon name="close" size={20} color="#fff" />
-        </CancelButton>
+        {data.status !== enumAppointment.cancelado && (
+          <CancelButton onPress={onCancel}>
+            <TextButton>Cancelar</TextButton>
+            <Icon name="close" size={20} color="#fff" />
+          </CancelButton>
+        )}
       </ContainerButton>
     </Container>
   );

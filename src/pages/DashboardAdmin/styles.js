@@ -26,11 +26,11 @@ export const Icons = styled.View`
 `;
 
 export const Title = styled.Text`
-  font-size: 20px;
+  font-size: 18px;
   color: #fff;
   font-weight: bold;
   align-self: center;
-  margin-right: 20px;
+  margin-right: 10px;
 `;
 
 export const List = styled.FlatList.attrs({

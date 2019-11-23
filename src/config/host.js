@@ -1,7 +1,6 @@
 export default {
   LOCALHOST: '192.168.10.102:3000',
-  // WEBHOST: '138.197.79.44',
   PORT: 3000,
-  // WEBHOST: '192.168.10.101',
   WEBHOST: '138.197.79.44',
+  //WEBHOST: '192.168.10.101',
 };

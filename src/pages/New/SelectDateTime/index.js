@@ -7,8 +7,9 @@ import api from '~/services/api';
 
 import Background from '~/components/Background';
 import DateInput from '~/components/DateInput';
+import Message from '~/components/Message';
 
-import {Container, HourList, Hour, Title, Message, Info, Name} from './styles';
+import {Container, HourList, Hour, Title,} from './styles';
 
 export default function SelectDateTime({navigation}) {
   const [date, setDate] = useState(new Date());
@@ -58,10 +59,8 @@ export default function SelectDateTime({navigation}) {
             )}
           />
         ) : (
-          <Message>
-            <Info>
-              <Name> Usuário não tem horário cadastrado!</Name>
-            </Info>
+          <Message nameIcon="exclamation-triangle">
+            Usuário não tem horário cadastrado!
           </Message>
         )}
       </Container>

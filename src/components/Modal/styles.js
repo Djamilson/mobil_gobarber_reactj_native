@@ -36,14 +36,13 @@ export const Children = styled.Text`
 export const Footer = styled.View`
   flex-direction: row;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   flex: 1;
   margin-top: 30px;
-  padding: 10px;
 `;
 
 export const YasButton = styled(TouchableOpacity)`
-  height: 43px;
+  height: 42px;
   background: #e74c3c;
   border-radius: 7px;
 
@@ -51,12 +50,12 @@ export const YasButton = styled(TouchableOpacity)`
   justify-content: center;
 
   margin-top: 10px;
-  width: 110px;
+  min-width: 105px;
   margin-bottom: 10px;
 `;
 
 export const NoButton = styled(TouchableOpacity)`
-  height: 43px;
+  height: 42px;
   background: #3b9eff;
   border-radius: 7px;
 
@@ -64,8 +63,9 @@ export const NoButton = styled(TouchableOpacity)`
   justify-content: center;
 
   margin-top: 10px;
-  width: 110px;
+  min-width: 105px;
   margin-bottom: 10px;
+  margin-right: 10px;
 `;
 
 export const Text = styled.Text`

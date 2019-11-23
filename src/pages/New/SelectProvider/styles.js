@@ -4,21 +4,6 @@ import {RectButton} from 'react-native-gesture-handler';
 export const Container = styled.SafeAreaView`
   flex: 1;
 `;
-export const Filter = styled.View`
-  padding: 0 15px;
-  height: 50px;
-  border-radius: 4px;
-  margin-top: 70px;
-  margin-left: 5px;
-  margin-right: 5px;
-  border: solid #c3c3c3 3px;
-  background: #cecece;
-  justify-content: center;
-
-  flex-direction: row;
-  align-items: center;
-  margin-bottom: 15px;
-`;
 
 export const ProvidersList = styled.FlatList.attrs({
   showsVerticalScrollIndicator: false,
@@ -78,6 +63,7 @@ export const GroupButton = styled.View`
   flex-direction: row;
   justify-content: center;
   align-items: center;
+  margin-top: 20px;
 `;
 
 export const ButtonPresencial = styled.TouchableOpacity`
