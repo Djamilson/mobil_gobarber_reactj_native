@@ -16,6 +16,7 @@ import api from '~/services/api';
 
 import Background from '~/components/Background';
 import AppointmentAdmin from '~/components/AppointmentAdmin';
+import Message from '~/components/Message';
 
 import {Container, Heder, Title, Icons, List} from './styles';
 import statusAppointment from '~/enum/appointments';
@@ -47,24 +48,15 @@ function Dashboard({isFocused}) {
   }, [isFocused]);
 
   async function handleCancel(id) {
-    // const response = await api.delete(`appointments/${id}`);
-    const response = await api.get(`appointment/${id}/provider`, {
+    const response = await api.get(`appointment/${id}/finally`, {
       params: {
         status: statusAppointment.cancelado,
       },
     });
 
     Alert.alert('Sucesso', 'Agendamento cancelado com sucesso!');
-    setAppointments(
-      appointments.map(appointment =>
-        appointment.id === id
-          ? {
-              ...appointment,
-              canceled_at: response.data.canceled_at,
-            }
-          : appointment
-      )
-    );
+
+    setAppointments(response.data);
   }
 
   function mudaStatus(appointment_id, status) {
@@ -80,7 +72,15 @@ function Dashboard({isFocused}) {
     setAppointments(novoStatus);
   }
 
-  async function onAtender(appointmentId) {
+  async function onAtender(appointmentId, index) {
+    if (index !== 0) {
+      Alert.alert(
+        'Atenção !',
+        'Não pode atender esse cliente no momento, você deve finalizar o atendimento anterior!'
+      );
+      return;
+    }
+
     const response = await api.get(`appointment/${appointmentId}/provider`, {
       params: {
         status: statusAppointment.atendendo,
@@ -102,7 +102,7 @@ function Dashboard({isFocused}) {
   function handleChamaCancel(id) {
     Alert.alert(
       `Deletar  agendamento`,
-      'Tem certeza que deseja deletar esse agendamento?',
+      'Tem certeza que deseja cancelar esse agendamento?',
       [
         {
           text: 'Não',
@@ -143,19 +143,24 @@ function Dashboard({isFocused}) {
             </TouchableOpacity>
           </Icons>
         </Heder>
-
-        <List
-          data={appointments}
-          keyExtractor={item => String(item.id)}
-          renderItem={({item}) => (
-            <AppointmentAdmin
-              onCancel={() => handleChamaCancel(item.id)}
-              onAtender={() => onAtender(item.id)}
-              onFinally={() => onFinally(item.id)}
-              data={item}
-            />
-          )}
-        />
+        {appointments.length !== 0 ? (
+          <List
+            data={appointments}
+            keyExtractor={item => String(item.id)}
+            renderItem={({item}) => (
+              <AppointmentAdmin
+                onAtender={() => onAtender(item.id, item.index)}
+                onFinally={() => onFinally(item.id)}
+                onCancel={() => handleChamaCancel(item.id)}
+                data={item}
+              />
+            )}
+          />
+        ) : (
+          <Message nameIcon="exclamation-triangle">
+            Você não tem horário agendado no momento!
+          </Message>
+        )}
       </Container>
       <Modal
         toggleModal={toggleModal}

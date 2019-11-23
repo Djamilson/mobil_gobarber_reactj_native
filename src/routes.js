@@ -61,7 +61,6 @@ export default (isSigned = false, provider) =>
                     ),
                   },
                 },
-                Profile,
                 Fila: {
                   screen: createStackNavigator(
                     {
@@ -90,6 +89,7 @@ export default (isSigned = false, provider) =>
                     ),
                   },
                 },
+                Profile,
               },
           {
             resetOnBlur: true,

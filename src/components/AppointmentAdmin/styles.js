@@ -12,14 +12,14 @@ export const Container = styled.View`
   opacity: ${props => (props.past && props.agendar ? 0.6 : 1)};
 `;
 export const ContainerButton = styled.View`
-  padding: 6px;
+  padding: 2px;
   border-radius: 7px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  max-width: 170px;
-  margin-left: 10px;
+  max-width: 100px;
+  margin-left: 2px;
 `;
 
 export const CancelButton = styled.TouchableOpacity`
@@ -64,10 +64,11 @@ export const Avatar = styled.Image`
   width: 50px;
   height: 50px;
   border-radius: 25px;
+  margin-right: 10px;
 `;
 
 export const Info = styled.View`
-  margin-left: 15px;
+  margin-left: 0px;
 `;
 
 export const InfoStatus = styled.View`
@@ -92,7 +93,7 @@ export const TextButton = styled.Text`
   font-weight: bold;
   font-size: 14px;
   color: #fff;
-  margin-right: 10px;
+  margin-right: 5px;
 `;
 
 export const Time = styled.Text`

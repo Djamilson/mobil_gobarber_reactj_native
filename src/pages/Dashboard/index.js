@@ -1,37 +1,20 @@
 import React, {useEffect, useState} from 'react';
-import {useDispatch} from 'react-redux';
-import {TouchableOpacity, Alert} from 'react-native';
+import {Alert} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import IconFontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
 import {withNavigationFocus} from 'react-navigation';
 import PropTypes from 'prop-types';
-import Modal from '~/components/Modal';
 
-import TermosCondicoes from '~/components/TermosCondicoes';
-
-import {signOut} from '~/store/modules/auth/actions';
 import api from '~/services/api';
 
 import Background from '~/components/Background';
 import Appointment from '~/components/Appointment';
-
-import {Container, Heder, Title, Icons, List} from './styles';
+import Message from '~/components/Message';
+import Haeder from '~/components/Header';
+import {Container, List} from './styles';
 
 function Dashboard({isFocused}) {
-  const dispatch = useDispatch();
   const [appointments, setAppointments] = useState([]);
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [isModalVisiblePrivacy, setIsModalVisiblePrivacy] = useState(false);
-
-  function toggleModalPrivacy() {
-    setIsModalVisiblePrivacy(!isModalVisiblePrivacy);
-  }
-
-  function toggleModal() {
-    setIsModalVisible(!isModalVisible);
-  }
 
   async function loadAppointments(page = 1) {
     const response = await api.get(`appointments?page=${page}`);
@@ -76,57 +59,27 @@ function Dashboard({isFocused}) {
     );
   }
 
-  function handleLogout() {
-    dispatch(signOut());
-  }
-
   return (
     <Background>
       <Container>
-        <Heder>
-          <Title>Agendamento</Title>
-
-          <Icons>
-            <TouchableOpacity onPress={toggleModal}>
-              <IconFontAwesome5
-                name="sign-out-alt"
-                size={26}
-                color="rgba(255, 255, 255, 0.6)"
+        <Haeder title="Agendamentos" />
+        {appointments.length !== 0 ? (
+          <List
+            data={appointments}
+            keyExtractor={item => String(item.id)}
+            renderItem={({item}) => (
+              <Appointment
+                onCancel={() => handleChamaCancel(item.id)}
+                data={item}
               />
-            </TouchableOpacity>
-
-            <TouchableOpacity onPress={toggleModalPrivacy}>
-              <FontAwesome
-                name="gear"
-                size={26}
-                color="rgba(255, 255, 255, 0.6)"
-              />
-            </TouchableOpacity>
-          </Icons>
-        </Heder>
-
-        <List
-          data={appointments}
-          keyExtractor={item => String(item.id)}
-          renderItem={({item}) => (
-            <Appointment
-              onCancel={() => handleChamaCancel(item.id)}
-              data={item}
-            />
-          )}
-        />
+            )}
+          />
+        ) : (
+          <Message nameIcon="exclamation-triangle">
+            Você não tem horário agendado no momento!
+          </Message>
+        )}
       </Container>
-      <Modal
-        toggleModal={toggleModal}
-        handleLogout={handleLogout}
-        isModalVisible={isModalVisible}>
-        Tem certeza que deseja sair do Gobarber?
-      </Modal>
-
-      <TermosCondicoes
-        toggleModal={toggleModalPrivacy}
-        isModalVisible={isModalVisiblePrivacy}
-      />
     </Background>
   );
 }
