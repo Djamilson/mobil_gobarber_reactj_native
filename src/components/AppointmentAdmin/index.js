@@ -32,7 +32,6 @@ export default function AppointmentAdmin({
   onCancel,
 }) {
   const dateParsed = useMemo(() => {
-    console.log('kkkk::>> ', data);
     return formatRelative(parseISO(data.data), new Date(), {
       locale: pt,
       addSuffix: true,
@@ -50,10 +49,9 @@ export default function AppointmentAdmin({
           }}
         />
         <Info>
-          <InfoStatus>
-            <StatusLabel>Cliente: </StatusLabel>
-            <Name>{data.user.name}</Name>
-          </InfoStatus>
+          <StatusLabel>Cliente: </StatusLabel>
+          <Name>{data.user.name}</Name>
+
           {data.status === enumAppointment.atendendo ? null : (
             <InfoStatus>
               <StatusLabel>Status:</StatusLabel>

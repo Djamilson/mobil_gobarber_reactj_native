@@ -50,6 +50,7 @@ export const Name = styled.Text`
   font-weight: bold;
   font-size: 14px;
   color: #333;
+  max-width: 220px;
 `;
 
 export const Time = styled.Text`

@@ -6,11 +6,13 @@ import RNPickerSelect from 'react-native-picker-select';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import Background from '~/components/Background';
+import Message from '~/components/Message';
+import Loading from '~/components/Loading';
+
 import api from '~/services/api';
 
 import {
   Container,
-  Filter,
   ProvidersList,
   Provider,
   ContainerLogo,
@@ -19,27 +21,45 @@ import {
   Name,
   Title,
 } from './styles';
+import Busca from '~/components/Busca';
 
 export default function SelectProvider({navigation}) {
   const [providers, setProviders] = useState([]);
   const [company, setCompany] = useState([]);
   const [companySelect, setCompanySelect] = useState({});
+  const [loading, setLoading] = useState(false);
 
   async function loadCompany() {
-    const response = await api.get(`empresas`);
+    setLoading(true);
+    await api
+      .get(`empresas`)
+      .then(res => {
+        setLoading(false);
 
-    const data = response.data.map(comp => ({
-      label: comp.name,
-      value: comp,
-      avatar: comp.avatar,
-    }));
+        const data = res.data.map(comp => ({
+          label: comp.name,
+          value: comp,
+          avatar: comp.avatar,
+        }));
 
-    setCompany(data);
+        setCompany(data);
+      })
+      .catch(() => {
+        setLoading(false);
+      });
   }
 
   async function loadProvider() {
-    const response = await api.get('providers');
-    setProviders(response.data);
+    setLoading(true);
+    await api
+      .get(`providers`)
+      .then(res => {
+        setLoading(false);
+        setProviders(res.data);
+      })
+      .catch(() => {
+        setLoading(false);
+      });
   }
 
   function handleNavSelectList(provider) {
@@ -53,9 +73,17 @@ export default function SelectProvider({navigation}) {
 
   async function handleSelectProvider(value) {
     if (value !== null) {
-      const response = await api.get(`users/${value.id}`);
-      setProviders(response.data);
-      setCompanySelect(value);
+      setLoading(true);
+      await api
+        .get(`users/${value.id}`)
+        .then(res => {
+          setLoading(false);
+          setProviders(res.data);
+          setCompanySelect(value);
+        })
+        .catch(() => {
+          setLoading(false);
+        });
     } else {
       loadProvider();
       setCompanySelect({});
@@ -65,64 +93,7 @@ export default function SelectProvider({navigation}) {
   return (
     <Background>
       <Container>
-        <Filter>
-          <RNPickerSelect
-            placeholder={{
-              label: 'Busca Salão...',
-              value: null,
-            }}
-            onValueChange={handleSelectProvider}
-            style={{
-              placeholder: {
-                color: '#cecec3',
-              },
-              inputAndroidContainer: {
-                overflow: 'hidden',
-
-                fontSize: 16,
-
-                paddingHorizontal: 20,
-                paddingBottom: 12,
-                borderWidth: 1,
-                borderColor: 'gray',
-                borderRadius: 100,
-
-                paddingVertical: 0,
-                marginHorizontal: 100,
-                textAlign: 'center',
-
-                alignSelf: 'flex-start',
-                borderStyle: 'solid',
-
-                minWidth: 48,
-                fontFamily: 'Monaco',
-              },
-
-              inputIOS: {
-                color: '#c3c3c3',
-                height: 45,
-                paddingLeft: 16,
-                paddingRight: 16,
-              },
-              inputAndroid: {
-                height: 45,
-                padding: 16,
-
-                width: 310,
-                borderRadius: 10,
-                backgroundColor: 'white',
-
-                color: 'cdarkblue',
-                fontFamily: 'OpenSans-Regular',
-                fontSize: 13,
-              },
-            }}
-            items={company}
-          />
-
-          <Icon name="search" size={30} color="#FFF" />
-        </Filter>
-
+        <Busca handleSelectProvider={handleSelectProvider} />
         {companySelect.logo ? (
           <ContainerLogo>
             <Logo
@@ -134,22 +105,29 @@ export default function SelectProvider({navigation}) {
           </ContainerLogo>
         ) : null}
 
-        <ProvidersList
-          data={providers}
-          keyExtractor={provider => String(provider.id)}
-          renderItem={({item: provider}) => (
-            <Provider onPress={() => handleNavSelectList(provider)}>
-              <Avatar
-                source={{
-                  uri: provider.avatar
-                    ? provider.avatar.url
-                    : `https://api.adorable.io/avatar/50/${provider.name}.png`,
-                }}
-              />
-              <Name>{provider.name}</Name>
-            </Provider>
-          )}
-        />
+        {loading && <Loading loading={loading}>Carregando ...</Loading>}
+        {!loading && providers.length < 1 ? (
+          <Message nameIcon="exclamation-triangle">
+            Você não tem horário agendado no momento!
+          </Message>
+        ) : (
+          <ProvidersList
+            data={providers}
+            keyExtractor={provider => String(provider.id)}
+            renderItem={({item: provider}) => (
+              <Provider onPress={() => handleNavSelectList(provider)}>
+                <Avatar
+                  source={{
+                    uri: provider.avatar
+                      ? provider.avatar.url
+                      : `https://api.adorable.io/avatar/50/${provider.name}.png`,
+                  }}
+                />
+                <Name>{provider.name}</Name>
+              </Provider>
+            )}
+          />
+        )}
       </Container>
     </Background>
   );

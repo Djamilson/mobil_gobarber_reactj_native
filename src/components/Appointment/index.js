@@ -24,6 +24,7 @@ export default function Appointment({data, onCancel}) {
       addSuffix: true,
     });
   }, [data.date]);
+
   return (
     <Container past={data.past} agendar={Boolean(data.agendar)}>
       <Left>
@@ -35,7 +36,8 @@ export default function Appointment({data, onCancel}) {
           }}
         />
         <Info>
-          <Name> {data.provider.name}</Name>
+          <StatusLabel>Atendimento com o:</StatusLabel>
+          <Name>{data.provider.name}</Name>
           <InfoStatus>
             <StatusLabel>Status</StatusLabel>
             <Status> {data.status}</Status>

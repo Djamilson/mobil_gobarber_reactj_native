@@ -9,11 +9,14 @@ import Background from '~/components/Background';
 import DateInput from '~/components/DateInput';
 import Message from '~/components/Message';
 
-import {Container, HourList, Hour, Title,} from './styles';
+import Loading from '~/components/Loading';
+
+import {Container, HourList, Hour, Title} from './styles';
 
 export default function SelectDateTime({navigation}) {
   const [date, setDate] = useState(new Date());
   const [hours, setHours] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const provider = navigation.getParam('provider');
   const router = navigation.getParam('router');
@@ -23,15 +26,22 @@ export default function SelectDateTime({navigation}) {
 
   useEffect(() => {
     async function loadAvailable() {
-      const response = await api.get(`providers/${provider.id}/available`, {
-        params: {
-          date: date.getTime(),
-        },
-      });
-      setHours(response.data);
+      setLoading(true);
+      await api
+        .get(`providers/${provider.id}/available`, {
+          params: {
+            date: date.getTime(),
+          },
+        })
+        .then(res => {
+          setLoading(false);
+          setHours(res.data);
+        })
+        .catch(() => {
+          setLoading(false);
+        });
     }
     loadAvailable();
-    // [date, hours, provider.id]
   }, [date, provider.id]);
 
   function handleSelectHour(time) {
@@ -46,7 +56,13 @@ export default function SelectDateTime({navigation}) {
     <Background>
       <Container>
         <DateInput date={date} onChange={setDate} />
-        {hours.length !== 0 ? (
+
+        {loading && <Loading loading={loading}>Carregando ...</Loading>}
+        {!loading && hours.length < 1 ? (
+          <Message nameIcon="exclamation-triangle">
+            Esse prestador não tem horário no momento!
+          </Message>
+        ) : (
           <HourList
             data={hours}
             keyExtractor={item => item.time.id}
@@ -58,10 +74,6 @@ export default function SelectDateTime({navigation}) {
               </Hour>
             )}
           />
-        ) : (
-          <Message nameIcon="exclamation-triangle">
-            Usuário não tem horário cadastrado!
-          </Message>
         )}
       </Container>
     </Background>

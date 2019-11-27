@@ -17,6 +17,7 @@ import api from '~/services/api';
 import Background from '~/components/Background';
 import AppointmentAdmin from '~/components/AppointmentAdmin';
 import Message from '~/components/Message';
+import Loading from '~/components/Loading';
 
 import {Container, Heder, Title, Icons, List} from './styles';
 import statusAppointment from '~/enum/appointments';
@@ -26,6 +27,7 @@ function Dashboard({isFocused}) {
   const [appointments, setAppointments] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isModalVisiblePrivacy, setIsModalVisiblePrivacy] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   function toggleModalPrivacy() {
     setIsModalVisiblePrivacy(!isModalVisiblePrivacy);
@@ -36,9 +38,16 @@ function Dashboard({isFocused}) {
   }
 
   async function loadAppointments(page = 1) {
-    const response = await api.get(`appointments/provider?page=${page}`);
-    console.log('Meus dados: ', response.data);
-    setAppointments(response.data);
+    setLoading(true);
+    await api
+      .get(`appointments/provider?page=${page}`)
+      .then(res => {
+        setLoading(false);
+        setAppointments(res.data);
+      })
+      .catch(() => {
+        setLoading(false);
+      });
   }
 
   useEffect(() => {
@@ -48,15 +57,26 @@ function Dashboard({isFocused}) {
   }, [isFocused]);
 
   async function handleCancel(id) {
-    const response = await api.get(`appointment/${id}/finally`, {
-      params: {
-        status: statusAppointment.cancelado,
-      },
-    });
+    setLoading(true);
+    await api
+      .get(`appointment/${id}/finally`, {
+        params: {
+          status: statusAppointment.cancelado,
+        },
+      })
+      .then(res => {
+        setLoading(false);
+        setAppointments(res.data);
+        Alert.alert('Sucesso', 'Agendamento cancelado com sucesso!');
+      })
+      .catch(() => {
+        setLoading(false);
 
-    Alert.alert('Sucesso', 'Agendamento cancelado com sucesso!');
-
-    setAppointments(response.data);
+        Alert.alert(
+          'Atenção',
+          'Não foi possível fazer o cancelamento, tente novamente!'
+        );
+      });
   }
 
   function mudaStatus(appointment_id, status) {
@@ -81,27 +101,43 @@ function Dashboard({isFocused}) {
       return;
     }
 
-    const response = await api.get(`appointment/${appointmentId}/provider`, {
-      params: {
-        status: statusAppointment.atendendo,
-      },
-    });
-    mudaStatus(appointmentId, response.data.status);
+    setLoading(true);
+    await api
+      .get(`appointment/${appointmentId}/provider`, {
+        params: {
+          status: statusAppointment.atendendo,
+        },
+      })
+      .then(res => {
+        setLoading(false);
+        setAppointments(res.data);
+        mudaStatus(appointmentId, res.data.status);
+      })
+      .catch(() => {
+        setLoading(false);
+      });
   }
 
   async function onFinally(appointmentId) {
-    const response = await api.get(`appointment/${appointmentId}/finally`, {
-      params: {
-        status: statusAppointment.finalizado,
-      },
-    });
-
-    setAppointments(response.data);
+    setLoading(true);
+    await api
+      .get(`appointment/${appointmentId}/finally`, {
+        params: {
+          status: statusAppointment.finalizado,
+        },
+      })
+      .then(res => {
+        setLoading(false);
+        setAppointments(res.data);
+      })
+      .catch(() => {
+        setLoading(false);
+      });
   }
 
   function handleChamaCancel(id) {
     Alert.alert(
-      `Deletar  agendamento`,
+      `Cancelar agendamento`,
       'Tem certeza que deseja cancelar esse agendamento?',
       [
         {
@@ -124,7 +160,6 @@ function Dashboard({isFocused}) {
       <Container>
         <Heder>
           <Title>Todos agendamento de Hoje</Title>
-
           <Icons>
             <TouchableOpacity onPress={toggleModal}>
               <IconFontAwesome5
@@ -143,6 +178,8 @@ function Dashboard({isFocused}) {
             </TouchableOpacity>
           </Icons>
         </Heder>
+        {loading && <Loading loading={loading}>Carregando ...</Loading>}
+
         {appointments.length !== 0 ? (
           <List
             data={appointments}

@@ -9,7 +9,8 @@ export const ProvidersList = styled.FlatList.attrs({
   showsVerticalScrollIndicator: false,
   numColumns: 2,
 })`
-  margin-top: 40px;
+  margin-top: ${props => (props.test ? '5px' : '30px')};
+
   padding: 0 20px;
 `;
 
@@ -28,7 +29,7 @@ export const ContainerLogo = styled.View`
   padding: 0 10px 20px 0;
 
   align-items: center;
-  margin: 0 10px 40px;
+  margin-top: 40px;
 `;
 
 export const Logo = styled.Image`
@@ -63,7 +64,7 @@ export const GroupButton = styled.View`
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  margin-top: 20px;
+  margin-top: ${props => (props.test ? '-45px' : '120px')};
 `;
 
 export const ButtonPresencial = styled.TouchableOpacity`
