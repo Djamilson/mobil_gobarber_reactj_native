@@ -1,10 +1,10 @@
 import React, {useEffect, useState} from 'react';
 
 import {TouchableOpacity, Alert} from 'react-native';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import IconFontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import PropTypes from 'prop-types';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import Loading from '~/components/Loading';
+import Message from '~/components/Message';
 
 import api from '~/services/api';
 
@@ -15,49 +15,50 @@ import {Container, Heder, List} from './styles';
 
 export default function FilaUser({navigation}) {
   const [appointments, setAppointments] = useState([]);
-
   const provider = navigation.getParam('provider');
- 
-
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [isModalVisiblePrivacy, setIsModalVisiblePrivacy] = useState(false);
-
-  console.log('Provider :: ', provider);
-  console.log('Provider :: ', provider.id);
-
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     async function loadAppointments(page = 1) {
-      const response = await api.get(
-        `appointments/${provider.id}/fila?page=${page}`
-      );
-      console.log('Fila:', response.data);
-      setAppointments(response.data);
+      setLoading(true);
+      await api
+        .get(`appointments/${provider.id}/fila?page=${page}`)
+        .then(res => {
+          setLoading(false);
+          setAppointments(res.data);
+        })
+        .catch(() => {
+          setLoading(false);
+        });
     }
     loadAppointments();
   }, [provider.id]);
 
-  function toggleModalPrivacy() {
-    setIsModalVisiblePrivacy(!isModalVisiblePrivacy);
-  }
-
-  function toggleModal() {
-    setIsModalVisible(!isModalVisible);
-  }
-
   async function handleCancel(id) {
-    const response = await api.delete(`appointments/${id}`);
-    Alert.alert('Sucesso', 'Agendamento cancelado com sucesso!');
-    setAppointments(
-      appointments.map(appointment =>
-        appointment.id === id
-          ? {
-              ...appointment,
-              canceled_at: response.data.canceled_at,
-            }
-          : appointment
-      )
-    );
+    setLoading(true);
+    await api
+      .delete(`appointments/${id}`)
+      .then(res => {
+        setLoading(false);
+        Alert.alert('Sucesso', 'Agendamento cancelado com sucesso!');
+        setAppointments(
+          appointments.map(appointment =>
+            appointment.id === id
+              ? {
+                  ...appointment,
+                  canceled_at: res.data.canceled_at,
+                }
+              : appointment
+          )
+        );
+      })
+      .catch(() => {
+        setLoading(false);
+        Alert.alert(
+          'Atenção',
+          'Não foi possível fazer o cancelamento no momento, tente novamente!'
+        );
+      });
   }
 
   function handleChamaCancel(id) {
@@ -80,16 +81,23 @@ export default function FilaUser({navigation}) {
     <Background>
       <Container>
         <Heder />
-        <List
-          data={appointments}
-          keyExtractor={item => String(item.id)}
-          renderItem={({item}) => (
-            <AppointmentFila
-              onCancel={() => handleChamaCancel(item.id)}
-              data={item}
-            />
-          )}
-        />
+        {loading && <Loading loading={loading}>Carregando ...</Loading>}
+        {!loading && appointments.length < 1 ? (
+          <Message nameIcon="exclamation-triangle">
+            Não tem usuário na fila no momento!
+          </Message>
+        ) : (
+          <List
+            data={appointments}
+            keyExtractor={item => String(item.id)}
+            renderItem={({item}) => (
+              <AppointmentFila
+                onCancel={() => handleChamaCancel(item.id)}
+                data={item}
+              />
+            )}
+          />
+        )}
       </Container>
     </Background>
   );

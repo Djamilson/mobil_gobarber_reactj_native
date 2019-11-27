@@ -9,17 +9,27 @@ import api from '~/services/api';
 
 import Background from '~/components/Background';
 import Appointment from '~/components/Appointment';
-import Message from '~/components/Message';
 import Haeder from '~/components/Header';
+import Loading from '~/components/Loading';
+import Message from '~/components/Message';
+
 import {Container, List} from './styles';
 
 function Dashboard({isFocused}) {
   const [appointments, setAppointments] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   async function loadAppointments(page = 1) {
-    const response = await api.get(`appointments?page=${page}`);
-
-    setAppointments(response.data);
+    setLoading(true);
+    await api
+      .get(`appointments?page=${page}`)
+      .then(res => {
+        setLoading(false);
+        setAppointments(res.data);
+      })
+      .catch(() => {
+        setLoading(false);
+      });
   }
 
   useEffect(() => {
@@ -63,7 +73,13 @@ function Dashboard({isFocused}) {
     <Background>
       <Container>
         <Haeder title="Agendamentos" />
-        {appointments.length !== 0 ? (
+
+        {loading && <Loading loading={loading}>Carregando ...</Loading>}
+        {!loading && appointments.length < 1 ? (
+          <Message nameIcon="exclamation-triangle">
+            Você não tem horário agendado no momento!
+          </Message>
+        ) : (
           <List
             data={appointments}
             keyExtractor={item => String(item.id)}
@@ -74,10 +90,6 @@ function Dashboard({isFocused}) {
               />
             )}
           />
-        ) : (
-          <Message nameIcon="exclamation-triangle">
-            Você não tem horário agendado no momento!
-          </Message>
         )}
       </Container>
     </Background>

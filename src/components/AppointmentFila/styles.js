@@ -25,7 +25,7 @@ export const Avatar = styled.Image`
 `;
 
 export const Info = styled.View`
-  margin-left: 15px;
+  margin-left: 25px;
 `;
 
 export const InfoStatus = styled.View`
@@ -65,6 +65,7 @@ export const Name = styled.Text`
   font-weight: bold;
   font-size: 14px;
   color: #333;
+  max-width: 220px;
 `;
 
 export const Time = styled.Text`

@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import enumAppointment from '~/enum/appointments';
 
 import {
   Container,
@@ -28,20 +29,25 @@ export default function AppointmentFila({data, onCancel}) {
           }}
         />
         <Info>
+          <StatusLabel>Atendimento com o:</StatusLabel>
           <InfoStatus>
-            <StatusLabel>Atendente:</StatusLabel>
-            <Name> {data.provider.name}</Name>
+            <Name>{data.provider.name}</Name>
           </InfoStatus>
 
           <InfoStatus>
             <StatusLabel>Status:</StatusLabel>
             <Status>{data.status}</Status>
           </InfoStatus>
-          <InfoStatusChamada>
-            <StatusLabel>Você é o:</StatusLabel>
-            <StatusText>{data.index}º</StatusText>
-            <StatusLabel>da fila</StatusLabel>
-          </InfoStatusChamada>
+          {data.status === enumAppointment.atendendo ? (
+            <InfoStatus>
+              <StatusText>Está sendo atendido</StatusText>
+            </InfoStatus>
+          ) : (
+            <>
+              <StatusLabel>Você é o:</StatusLabel>
+              <StatusText>{data.index}º da fila</StatusText>
+            </>
+          )}
         </Info>
       </Left>
       {data.cancelable && !data.canceled_at && (

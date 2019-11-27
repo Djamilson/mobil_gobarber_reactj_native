@@ -10,6 +10,8 @@ import api from '~/services/api';
 
 import enumAppointments from '~/enum/appointments';
 import Busca from '~/components/Busca';
+import Loading from '~/components/Loading';
+import Message from '~/components/Message';
 
 import {
   Container,
@@ -31,12 +33,21 @@ export default function SelectProvider({navigation}) {
 
   const [companySelect, setCompanySelect] = useState({});
   const [optionAgendar, setOptionAgendar] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const routerAgendar = 'appointments';
 
   async function loadProvider() {
-    const response = await api.get('providers');
-    setProviders(response.data);
+    setLoading(true);
+    await api
+      .get(`providers`)
+      .then(res => {
+        setLoading(false);
+        setProviders(res.data);
+      })
+      .catch(() => {
+        setLoading(false);
+      });
   }
 
   function selectoptionAgendar() {
@@ -83,9 +94,17 @@ export default function SelectProvider({navigation}) {
 
   async function handleSelectProvider(value) {
     if (value !== null) {
-      const response = await api.get(`users/${value.id}`);
-      setProviders(response.data);
-      setCompanySelect(value);
+      setLoading(true);
+      await api
+        .get(`users/${value.id}`)
+        .then(res => {
+          setLoading(false);
+          setProviders(res.data);
+          setCompanySelect(value);
+        })
+        .catch(() => {
+          setLoading(false);
+        });
     } else {
       loadProvider();
       setCompanySelect({});
@@ -96,11 +115,26 @@ export default function SelectProvider({navigation}) {
     <Background>
       <Container>
         <Busca handleSelectProvider={handleSelectProvider} />
-        <GroupButton>
+        {companySelect.logo && companySelect.logo.url && (
+          <ContainerLogo>
+            <Logo
+              source={{
+                uri: companySelect.logo
+                  ? companySelect.logo.url
+                  : `https://api.adorable.io/avatar/50/${companySelect.name}.png`,
+              }}
+            />
+
+            <Title>{companySelect.name}</Title>
+          </ContainerLogo>
+        )}
+
+        <GroupButton
+          test={companySelect.logo && companySelect.logo.url && true}>
           <ButtonPresencial
             onPress={() => selectoptionAgendar()}
             disabled={!optionAgendar}>
-            {optionAgendar ? null : (
+            {!optionAgendar && (
               <IconGroupButton name="thumbs-o-up" size={30} color="#FFF" />
             )}
             <Text>Entra na Fila</Text>
@@ -108,41 +142,37 @@ export default function SelectProvider({navigation}) {
           <ButtonAgendar
             onPress={() => selectoptionAgendar()}
             disabled={optionAgendar}>
-            {optionAgendar ? (
+            {optionAgendar && (
               <IconGroupButton name="thumbs-o-up" size={30} color="#FFF" />
-            ) : null}
-
+            )}
             <Text>Agendar</Text>
           </ButtonAgendar>
         </GroupButton>
 
-        {companySelect.logo ? (
-          <ContainerLogo>
-            <Logo
-              source={{
-                uri: companySelect.logo ? companySelect.logo.url : null,
-              }}
-            />
-            <Title>{companySelect.name} </Title>
-          </ContainerLogo>
-        ) : null}
-
-        <ProvidersList
-          data={providers}
-          keyExtractor={provider => String(provider.id)}
-          renderItem={({item: provider}) => (
-            <Provider onPress={() => handleSelectHour(provider)}>
-              <Avatar
-                source={{
-                  uri: provider.avatar
-                    ? provider.avatar.url
-                    : `https://api.adorable.io/avatar/50/${provider.name}.png`,
-                }}
-              />
-              <Name>{provider.name}</Name>
-            </Provider>
-          )}
-        />
+        {loading && <Loading loading={loading}>Carregando ...</Loading>}
+        {!loading && providers.length < 1 ? (
+          <Message nameIcon="exclamation-triangle">
+            Ainda não temos prestador de serviços cadastrados!
+          </Message>
+        ) : (
+          <ProvidersList
+            test={companySelect.logo && companySelect.logo.url && true}
+            data={providers}
+            keyExtractor={provider => String(provider.id)}
+            renderItem={({item: provider}) => (
+              <Provider onPress={() => handleSelectHour(provider)}>
+                <Avatar
+                  source={{
+                    uri: provider.avatar
+                      ? provider.avatar.url
+                      : `https://api.adorable.io/avatar/50/${provider.name}.png`,
+                  }}
+                />
+                <Name>{provider.name}</Name>
+              </Provider>
+            )}
+          />
+        )}
       </Container>
     </Background>
   );
