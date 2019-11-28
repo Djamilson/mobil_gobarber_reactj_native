@@ -128,26 +128,27 @@ export default function SelectProvider({navigation}) {
             <Title>{companySelect.name}</Title>
           </ContainerLogo>
         )}
-
-        <GroupButton
-          test={companySelect.logo && companySelect.logo.url && true}>
-          <ButtonPresencial
-            onPress={() => selectoptionAgendar()}
-            disabled={!optionAgendar}>
-            {!optionAgendar && (
-              <IconGroupButton name="thumbs-o-up" size={30} color="#FFF" />
-            )}
-            <Text>Entra na Fila</Text>
-          </ButtonPresencial>
-          <ButtonAgendar
-            onPress={() => selectoptionAgendar()}
-            disabled={optionAgendar}>
-            {optionAgendar && (
-              <IconGroupButton name="thumbs-o-up" size={30} color="#FFF" />
-            )}
-            <Text>Agendar</Text>
-          </ButtonAgendar>
-        </GroupButton>
+        {!loading && (
+          <GroupButton
+            test={companySelect.logo && companySelect.logo.url && true}>
+            <ButtonPresencial
+              onPress={() => selectoptionAgendar()}
+              disabled={!optionAgendar}>
+              {!optionAgendar && (
+                <IconGroupButton name="thumbs-o-up" size={30} color="#FFF" />
+              )}
+              <Text>Entra na Fila</Text>
+            </ButtonPresencial>
+            <ButtonAgendar
+              onPress={() => selectoptionAgendar()}
+              disabled={optionAgendar}>
+              {optionAgendar && (
+                <IconGroupButton name="thumbs-o-up" size={30} color="#FFF" />
+              )}
+              <Text>Agendar</Text>
+            </ButtonAgendar>
+          </GroupButton>
+        )}
 
         {loading && <Loading loading={loading}>Carregando ...</Loading>}
         {!loading && providers.length < 1 ? (

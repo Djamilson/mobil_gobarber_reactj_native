@@ -10,7 +10,6 @@ import {
   Avatar,
   Info,
   InfoStatus,
-  InfoStatusChamada,
   StatusLabel,
   StatusText,
   Status,

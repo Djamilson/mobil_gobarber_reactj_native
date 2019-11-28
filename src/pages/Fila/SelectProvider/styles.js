@@ -24,7 +24,8 @@ export const ProvidersList = styled.FlatList.attrs({
   showsVerticalScrollIndicator: false,
   numColumns: 2,
 })`
-  margin-top: 40px;
+  margin-top: ${props => (props.test ? '5px' : '30px')};
+
   padding: 0 20px;
 `;
 
