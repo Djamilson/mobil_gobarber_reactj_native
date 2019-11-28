@@ -1,11 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import {TouchableOpacity} from 'react-native';
 import PropTypes from 'prop-types';
-import RNPickerSelect from 'react-native-picker-select';
 
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
-import Background from '~/components/Background';
+import Background from '~/components/Background/Fila';
 import Message from '~/components/Message';
 import Loading from '~/components/Loading';
 
@@ -25,29 +24,9 @@ import Busca from '~/components/Busca';
 
 export default function SelectProvider({navigation}) {
   const [providers, setProviders] = useState([]);
-  const [company, setCompany] = useState([]);
+  const [setCompany] = useState([]);
   const [companySelect, setCompanySelect] = useState({});
   const [loading, setLoading] = useState(false);
-
-  async function loadCompany() {
-    setLoading(true);
-    await api
-      .get(`empresas`)
-      .then(res => {
-        setLoading(false);
-
-        const data = res.data.map(comp => ({
-          label: comp.name,
-          value: comp,
-          avatar: comp.avatar,
-        }));
-
-        setCompany(data);
-      })
-      .catch(() => {
-        setLoading(false);
-      });
-  }
 
   async function loadProvider() {
     setLoading(true);
@@ -68,6 +47,25 @@ export default function SelectProvider({navigation}) {
 
   useEffect(() => {
     loadProvider();
+    async function loadCompany() {
+      setLoading(true);
+      await api
+        .get(`empresas`)
+        .then(res => {
+          setLoading(false);
+
+          const data = res.data.map(comp => ({
+            label: comp.name,
+            value: comp,
+            avatar: comp.avatar,
+          }));
+
+          setCompany(data);
+        })
+        .catch(() => {
+          setLoading(false);
+        });
+    }
     loadCompany();
   }, []);
 
@@ -94,16 +92,19 @@ export default function SelectProvider({navigation}) {
     <Background>
       <Container>
         <Busca handleSelectProvider={handleSelectProvider} />
-        {companySelect.logo ? (
+
+        {companySelect.logo && companySelect.logo.url && (
           <ContainerLogo>
             <Logo
               source={{
-                uri: companySelect.logo ? companySelect.logo.url : null,
+                uri: companySelect.logo
+                  ? companySelect.logo.url
+                  : `https://api.adorable.io/avatar/50/${companySelect.name}.png`,
               }}
             />
-            <Title>{companySelect.name} </Title>
+            <Title>{companySelect.name}</Title>
           </ContainerLogo>
-        ) : null}
+        )}
 
         {loading && <Loading loading={loading}>Carregando ...</Loading>}
         {!loading && providers.length < 1 ? (
@@ -134,7 +135,7 @@ export default function SelectProvider({navigation}) {
 }
 
 SelectProvider.navigationOptions = ({navigation}) => ({
-  title: 'Selecione o prestador',
+  title: 'Fila > Selecione o prestador',
   headerLeft: () => (
     <TouchableOpacity
       onPress={() => {

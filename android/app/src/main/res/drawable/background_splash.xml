@@ -3,12 +3,6 @@
 
 
 <!-- tela de fundo, background-->
-
-<!-- <item
-   android:drawable="@mipmap/screen"
-    android:gravity="fill"
-/>-->
-
 <item
    android:drawable="@color/primary"/>
 
@@ -20,15 +14,9 @@
         android:gravity="center"
         />
 
+
 <!-- icon_text e a logo-->
 
-<!-- Logo -->
- <item
-        android:width="260dp"
-        android:height="260dp"
-        android:drawable="@drawable/icon"
-        android:gravity="center"
-        />
 
 
 </layer-list>

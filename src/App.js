@@ -18,7 +18,6 @@ export default function App() {
       : false
   );
 
-  console.log('Provider::: HUUUM', provider);
   // console.log('Usuário: ', state_);
   // console.log('Estou aqui:', signed);
   // console.tron.log('Estou aqui:', signed);

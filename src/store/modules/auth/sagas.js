@@ -35,9 +35,6 @@ export function* signIn({payload}) {
   } catch (error) {
     const str = error.toString();
     const final = str.replace(/\D/g, '');
-    console.log('Meu erro: ', error);
-    console.log('Final: ', final);
-    console.log('STR: ', str);
 
     if (final === '400') {
       Alert.alert(

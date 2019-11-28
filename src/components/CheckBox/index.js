@@ -5,7 +5,6 @@ import PropTypes from 'prop-types';
 import {CheckBoxInput, TInput} from './styles';
 
 export default function CheckBox({selected, text, ...rest}) {
-  console.log('Rest:', rest);
   return (
     <CheckBoxInput {...rest}>
       <Icon

@@ -34,15 +34,6 @@ export const InfoStatus = styled.View`
   flex-direction: row;
 `;
 
-export const InfoStatusChamada = styled.View`
-  margin-left: 0px;
-  flex: 1;
-  flex-direction: column;
-  align-content: stretch;
-  justify-content: center;
-  align-items: center;
-`;
-
 export const StatusLabel = styled.Text`
   font-weight: bold;
   font-size: 14px;
