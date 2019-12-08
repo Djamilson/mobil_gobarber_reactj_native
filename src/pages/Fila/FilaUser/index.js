@@ -66,7 +66,6 @@ export default function FilaUser({navigation}) {
 
       io.on('finally', dta => {
         console.log('Pela a barba do profeta:', dta.listAppointments);
-        console.log('Pela a barba do profeta: Status::::', dta.status);
         const {
           listAppointments,
           status: statusNovo,
