@@ -1,10 +1,12 @@
 import {Alert} from 'react-native';
-import {takeLatest, call, put, all} from 'redux-saga/effects';
-
+import {all, call, put, takeLatest} from 'redux-saga/effects';
 import api from '~/services/api';
-
-import {signInSuccess, signFailure} from './actions';
-import {signUpSuccess, signInFaileru} from '../user/actions';
+import {
+  signInFaileru,
+  signUpSuccess,
+  updateProfileSuccess,
+} from '../user/actions';
+import {signFailure, signInSuccess} from './actions';
 
 export function* signIn({payload}) {
   try {
@@ -28,9 +30,17 @@ export function* signIn({payload}) {
     } */
 
     api.defaults.headers.Authorization = ` Bearer ${token}`;
-
+    //const {last_login_at} = user;
     yield put(signInSuccess(token, user));
 
+    /*
+    if (!last_login_at) {
+    yield put(signInSuccess(token, user));
+
+      return NavigationService.navigate('RegulationReview');
+    }*/
+
+    // return NavigationService.navigate('rota')
     // history.push('/dashboard');
   } catch (error) {
     const str = error.toString();
@@ -156,6 +166,24 @@ export function* signUp({payload}) {
   }
 }
 
+export function* acceptRegulationUp() {
+  try {
+    const response = yield call(api.get, 'accept_regulation');
+
+    Alert.alert('Sucesso', 'Termos aceito com sucesso!');
+
+    yield put(updateProfileSuccess(response.data));
+    return;
+  } catch (error) {
+    Alert.alert(
+      'Error',
+      'Não foi possível aceitar os termos, tente novamente!'
+    );
+
+    yield put(signInFaileru());
+  }
+}
+
 export function setToken({payload}) {
   if (!payload) return;
   const {token} = payload.auth;
@@ -169,5 +197,6 @@ export default all([
   takeLatest('persist/REHYDRATE', setToken),
   takeLatest('@auth/SIGN_IN_REQUEST', signIn),
   takeLatest('@auth/SIGN_UP_REQUEST', signUp),
+  takeLatest('@auth/ACCEPT_REGULATION', acceptRegulationUp),
   takeLatest('@user/SIGN_UP_SUCCESS', signUp),
 ]);

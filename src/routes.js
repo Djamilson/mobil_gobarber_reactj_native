@@ -1,32 +1,39 @@
 import React from 'react';
-
+import IconMa from 'react-native-vector-icons/MaterialCommunityIcons';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import {createAppContainer, createSwitchNavigator} from 'react-navigation';
 import {createStackNavigator} from 'react-navigation-stack';
 import {createBottomTabNavigator} from 'react-navigation-tabs';
-
-import Icon from 'react-native-vector-icons/MaterialIcons';
-import IconMa from 'react-native-vector-icons/MaterialCommunityIcons';
-
-import SignIn from '~/pages/SignIn';
-import SignUp from '~/pages/SignUp';
-import ResetPassword from '~/pages/RecuperaPassword';
 import Dashboard from '~/pages/Dashboard';
 import ProvideAdmin from '~/pages/DashboardAdmin';
-import Profile from '~/pages/Profile';
-// import Fila from '~/pages/Fila';
-
-import SelectProvider from '~/pages/New/SelectProvider';
-import SelectDateTime from '~/pages/New/SelectDateTime';
-import Confirm from '~/pages/New/Confirm';
-
-import SelectProviderFila from '~/pages/Fila/SelectProvider';
 import FilaUser from '~/pages/Fila/FilaUser';
+import SelectProviderFila from '~/pages/Fila/SelectProvider';
+import Confirm from '~/pages/New/Confirm';
+import SelectDateTime from '~/pages/New/SelectDateTime';
+// import Fila from '~/pages/Fila';
+import SelectProvider from '~/pages/New/SelectProvider';
+import Profile from '~/pages/Profile';
+import ResetPassword from '~/pages/RecuperaPassword';
+import RegulationReview from '~/pages/RegulationRaview';
+import SignIn from '~/pages/SignIn';
+import SignUp from '~/pages/SignUp';
 
-export default (isSigned = false, provider) =>
+function getInitialRoute(isSigned, acceped_regulation) {
+  if (isSigned) {
+    if (acceped_regulation) {
+      return 'App';
+    }
+    return 'RegulationReview';
+  }
+  return 'Sign';
+}
+
+export default (isSigned = false, provider, acceped_regulation) =>
   createAppContainer(
     createSwitchNavigator(
       {
         Sign: createSwitchNavigator({SignIn, SignUp, ResetPassword}),
+        RegulationReview: createSwitchNavigator({RegulationReview}),
         App: createBottomTabNavigator(
           provider
             ? {ProvideAdmin}
@@ -103,7 +110,7 @@ export default (isSigned = false, provider) =>
         ),
       },
       {
-        initialRouteName: isSigned ? 'App' : 'Sign',
+        initialRouteName: getInitialRoute(isSigned, acceped_regulation),
       },
       {
         headerLayoutPreset: 'center',

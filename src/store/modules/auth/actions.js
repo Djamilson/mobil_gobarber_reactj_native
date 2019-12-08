@@ -43,3 +43,7 @@ export function signOut() {
     type: '@auth/SIGN_OUT',
   };
 }
+
+export function acceptionRegulation() {
+  return {type: '@auth/ACCEPT_REGULATION'};
+}
