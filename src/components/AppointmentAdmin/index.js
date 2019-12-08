@@ -52,7 +52,7 @@ export default function AppointmentAdmin({
           <StatusLabel>Cliente: </StatusLabel>
           <Name>{data.user.name}</Name>
 
-          {data.status === enumAppointment.atendendo ? null : (
+          {data.status === enumAppointment.atendendo && (
             <InfoStatus>
               <StatusLabel>Status:</StatusLabel>
               <Status>{data.status}</Status>

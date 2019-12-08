@@ -20,9 +20,6 @@ export default function SelectDateTime({navigation}) {
 
   const provider = navigation.getParam('provider');
   const router = navigation.getParam('router');
-  console.log('Provider :: ', provider);
-  console.log('Provider :: ', provider.id);
-  console.log('router :: ', router);
 
   useEffect(() => {
     async function loadAvailable() {

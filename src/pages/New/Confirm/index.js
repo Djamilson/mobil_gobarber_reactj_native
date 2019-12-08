@@ -18,10 +18,6 @@ export default function Confirm({navigation}) {
   const time = navigation.getParam('time');
   const router = navigation.getParam('router');
 
-  console.log('ID Provider :: ', id);
-  console.log('Vou confirmar agora time :: ', time);
-  console.log('Vou confirmar agora router :: ', router);
-
   const dateFormatted = useMemo(
     () =>
       formatRelative(parseISO(time), new Date(), {
@@ -31,7 +27,6 @@ export default function Confirm({navigation}) {
   );
 
   async function handleAddAppointment() {
-    console.log('Agora sim: vou inserir: ', time);
     await api
       .post(router, {
         provider_id: id,
@@ -41,7 +36,7 @@ export default function Confirm({navigation}) {
       })
       .catch(error => {
         // Your error is here!
-        console.log('EEERRROU:::', error);
+        // console.log('EEERRROU:::', error);
       });
 
     navigation.navigate('Dashboard');

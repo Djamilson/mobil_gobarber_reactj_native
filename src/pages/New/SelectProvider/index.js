@@ -72,10 +72,6 @@ export default function SelectProvider({navigation}) {
       const data2 = new Date(data.valueOf() - data.getTimezoneOffset() * 60000);
       const time = data2.toISOString().replace(/\.\d{3}Z$/, '');
 
-      console.log('data:', data);
-      console.log('data2:', data2);
-      console.log('Meu Time:', time);
-
       return navigation.navigate('Confirm', {
         provider: newprovider,
         time,
