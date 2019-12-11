@@ -18,9 +18,8 @@ import enumAppointment from '~/enum/appointments';
 import api from '~/services/api';
 import {Container, List} from './styles';
 
-function Dashboard({isFocused}) {
+function Dashboard({isFocused, navigation}) {
   const profile = useSelector(state => state.user.profile);
-
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(false);
   const [messageCanceled, setMessageCanceled] = useState(false);
@@ -73,9 +72,6 @@ function Dashboard({isFocused}) {
       });
 
       io.on('finally', dta => {
-        console.log('kkkk:::', dta);
-        console.log('ID:::', dta.id);
-        console.log('finally::', appointments);
         if (
           dta.id !== null &&
           dta.id !== undefined &&
@@ -165,7 +161,7 @@ function Dashboard({isFocused}) {
   return (
     <Background>
       <Container>
-        <Haeder title="Agendamentos" />
+        <Haeder title="Agendamentos" navigation={navigation} />
         {loading && <Loading loading={loading}>Carregando ...</Loading>}
         {!loading && appointments.length < 1 ? (
           <Message nameIcon="exclamation-triangle">
@@ -212,6 +208,9 @@ Dashboard.navigationOptions = {
 
 Dashboard.propTypes = {
   isFocused: PropTypes.bool.isRequired,
+  navigation: PropTypes.shape({
+    navigate: PropTypes.func.isRequired,
+  }).isRequired,
 };
 
 export default withNavigationFocus(Dashboard);

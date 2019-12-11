@@ -1,10 +1,10 @@
-import {formatRelative, parseISO} from 'date-fns';
+import { formatRelative, parseISO } from 'date-fns';
 import pt from 'date-fns/locale/pt';
 import PropTypes from 'prop-types';
-import React, {useEffect, useState} from 'react';
-import {Alert, TouchableOpacity} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Alert, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import {useSelector} from 'react-redux';
+import { useSelector } from 'react-redux';
 import socket from 'socket.io-client';
 import AppointmentFila from '~/components/AppointmentFila';
 import Background from '~/components/Background';
@@ -14,7 +14,7 @@ import MessageCanceled from '~/components/MessageCancel';
 import host from '~/config/host';
 import enumAppointment from '~/enum/appointments';
 import api from '~/services/api';
-import {Container, Heder, List} from './styles';
+import { Container, Heder, List } from './styles';
 
 export default function FilaUser({navigation}) {
   const provider = navigation.getParam('provider');

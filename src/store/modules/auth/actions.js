@@ -44,6 +44,9 @@ export function signOut() {
   };
 }
 
-export function acceptionRegulation() {
-  return {type: '@auth/ACCEPT_REGULATION'};
+export function acceptionRegulation(token, newPrivacy, navigate) {
+  return {
+    type: '@auth/ACCEPT_REGULATION',
+    payload: {token, newPrivacy, navigate},
+  };
 }

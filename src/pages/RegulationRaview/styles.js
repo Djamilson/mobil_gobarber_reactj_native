@@ -1,29 +1,6 @@
 import styled from 'styled-components/native';
 import {RectButton} from 'react-native-gesture-handler';
 
-export const Container = styled.SafeAreaView`
-  flex: 1;
-`;
-export const Content = styled.ScrollView.attrs({
-  contentContainerStyle: {padding: 30, paddingBottom: 120},
-  showsVerticalScrollIndicator: false,
-})``;
-
-export const Regulation = styled.Text`
-  font-size: 18px;
-  color: #fff;
-  line-height: 26px;
-`;
-
-export const Title = styled.Text`
-  font-size: 18px;
-  font-weight: bold;
-  color: #fff;
-  margin-bottom: 30px;
-  letter-spacing: 2.8px;
-  text-transform: uppercase;
-`;
-
 export const ApproveButton = styled(RectButton)`
   position: absolute;
   bottom: 30px;

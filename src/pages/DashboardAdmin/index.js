@@ -17,9 +17,10 @@ import host from '~/config/host';
 import statusAppointment from '~/enum/appointments';
 import api from '~/services/api';
 import {signOut} from '~/store/modules/auth/actions';
+import Haeder from '~/components/Header';
 import {Container, Heder, Icons, List, Title} from './styles';
 
-function Dashboard({isFocused}) {
+function Dashboard({isFocused, navigation}) {
   const dispatch = useDispatch();
   const [appointments, setAppointments] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -175,29 +176,13 @@ function Dashboard({isFocused}) {
   return (
     <Background>
       <Container>
-        <Heder>
-          <Title>Todos agendamento de Hoje</Title>
-          <Icons>
-            <TouchableOpacity onPress={toggleModal}>
-              <IconFontAwesome5
-                name="sign-out-alt"
-                size={26}
-                color="rgba(255, 255, 255, 0.6)"
-              />
-            </TouchableOpacity>
-
-            <TouchableOpacity onPress={toggleModalPrivacy}>
-              <FontAwesome
-                name="gear"
-                size={26}
-                color="rgba(255, 255, 255, 0.6)"
-              />
-            </TouchableOpacity>
-          </Icons>
-        </Heder>
+        <Haeder title="Todos agendamento de Hoje" navigation={navigation} />
         {loading && <Loading loading={loading}>Carregando ...</Loading>}
-
-        {appointments.length !== 0 ? (
+        {!loading && appointments.length < 1 ? (
+          <Message nameIcon="exclamation-triangle">
+            Você não tem horário agendado no momento!
+          </Message>
+        ) : (
           <List
             data={appointments}
             keyExtractor={item => String(item.id)}
@@ -210,23 +195,8 @@ function Dashboard({isFocused}) {
               />
             )}
           />
-        ) : (
-          <Message nameIcon="exclamation-triangle">
-            Você não tem horário agendado no momento!
-          </Message>
         )}
       </Container>
-      <Modal
-        toggleModal={toggleModal}
-        handleLogout={handleLogout}
-        isModalVisible={isModalVisible}>
-        Tem certeza que deseja sair do Gobarber?
-      </Modal>
-
-      <TermosCondicoes
-        toggleModal={toggleModalPrivacy}
-        isModalVisible={isModalVisiblePrivacy}
-      />
     </Background>
   );
 }
@@ -246,6 +216,9 @@ Dashboard.navigationOptions = {
 
 Dashboard.propTypes = {
   isFocused: PropTypes.bool.isRequired,
+  navigation: PropTypes.shape({
+    navigate: PropTypes.func.isRequired,
+  }).isRequired,
 };
 
 export default withNavigationFocus(Dashboard);
