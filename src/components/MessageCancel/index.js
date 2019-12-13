@@ -20,9 +20,8 @@ export default function MessageCancel({
           <IconMat name="close-circle" size={30} color="#ffe119" />
         </CloseButton>
         <Name>
-          Por algum motivo o agendamento de
-          {dataFormat !== undefined && dataFormat} com o prestador de serviço
-          {appointmentSelect} foi cancelado!
+          Por algum motivo o agendamento de {dataFormat}, com o prestador de
+          serviço {'\n'} {appointmentSelect} foi cancelado!
         </Name>
       </Info>
     </Container>

@@ -104,6 +104,7 @@ function Dashboard({isFocused, navigation}) {
               appSelected.provider.name
             );
             setDataFormat(dateFormatted(appSelected.date));
+            // setDataFormat(appSelected.date);
           }
         }
       });
@@ -180,7 +181,7 @@ function Dashboard({isFocused, navigation}) {
           />
         )}
 
-        {messageCanceled && (
+        {messageCanceled && dataFormat !== undefined && (
           <MessageCanceled
             nameIcon="exclamation-triangle"
             closeMessage={closeMessage}

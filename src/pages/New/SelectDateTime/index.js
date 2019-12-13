@@ -18,6 +18,16 @@ export default function SelectDateTime({navigation}) {
   const [hours, setHours] = useState([]);
   const [loading, setLoading] = useState(false);
 
+  const [isDateTimePickerVisible, setIsDateTimePickerVisible] = useState(false);
+
+  function showDateTimePicker() {
+    setIsDateTimePickerVisible(true);
+  }
+
+  function hideDateTimePicker() {
+    setIsDateTimePickerVisible(false);
+  }
+
   const provider = navigation.getParam('provider');
   const router = navigation.getParam('router');
 
@@ -52,7 +62,13 @@ export default function SelectDateTime({navigation}) {
   return (
     <Background>
       <Container>
-        <DateInput date={date} onChange={setDate} />
+        <DateInput
+          date={date}
+          onChange={setDate}
+          hideDateTimePicker={hideDateTimePicker}
+          showDateTimePicker={showDateTimePicker}
+          isDateTimePickerVisible={isDateTimePickerVisible}
+        />
 
         {loading && <Loading loading={loading}>Carregando ...</Loading>}
         {!loading && hours.length < 1 ? (

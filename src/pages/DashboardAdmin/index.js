@@ -1,40 +1,24 @@
 import PropTypes from 'prop-types';
 import React, {useEffect, useState} from 'react';
-import {Alert, TouchableOpacity} from 'react-native';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import IconFontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import {Alert} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {withNavigationFocus} from 'react-navigation';
-import {useDispatch, useSelector} from 'react-redux';
+import {useSelector} from 'react-redux';
 import socket from 'socket.io-client';
 import AppointmentAdmin from '~/components/AppointmentAdmin';
 import Background from '~/components/Background';
 import Loading from '~/components/Loading';
 import Message from '~/components/Message';
-import Modal from '~/components/Modal';
-import TermosCondicoes from '~/components/TermosCondicoes';
 import host from '~/config/host';
 import statusAppointment from '~/enum/appointments';
 import api from '~/services/api';
-import {signOut} from '~/store/modules/auth/actions';
 import Haeder from '~/components/Header';
-import {Container, Heder, Icons, List, Title} from './styles';
+import {Container, List} from './styles';
 
 function Dashboard({isFocused, navigation}) {
-  const dispatch = useDispatch();
   const [appointments, setAppointments] = useState([]);
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [isModalVisiblePrivacy, setIsModalVisiblePrivacy] = useState(false);
   const [loading, setLoading] = useState(false);
   const profile = useSelector(state => state.user.profile);
-
-  function toggleModalPrivacy() {
-    setIsModalVisiblePrivacy(!isModalVisiblePrivacy);
-  }
-
-  function toggleModal() {
-    setIsModalVisible(!isModalVisible);
-  }
 
   async function loadAppointments(page = 1) {
     setLoading(true);
@@ -43,7 +27,6 @@ function Dashboard({isFocused, navigation}) {
       .then(res => {
         setLoading(false);
         setAppointments(res.data);
-        console.log('MMMM:', res.data);
       })
       .catch(() => {
         setLoading(false);
@@ -57,7 +40,6 @@ function Dashboard({isFocused, navigation}) {
       });
 
       io.on('appointment', dta => {
-        console.log('data::: ', dta);
         setAppointments(dta);
       });
     }
@@ -167,10 +149,6 @@ function Dashboard({isFocused, navigation}) {
       ],
       {cancelable: false}
     );
-  }
-
-  function handleLogout() {
-    dispatch(signOut());
   }
 
   return (

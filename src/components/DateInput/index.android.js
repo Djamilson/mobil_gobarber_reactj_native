@@ -1,36 +1,45 @@
 import React, {useMemo} from 'react';
 import PropTypes from 'prop-types';
-import {DatePickerAndroid} from 'react-native';
+
+import DateTimePicker from 'react-native-modal-datetime-picker';
+
 import {format} from 'date-fns';
 import pt from 'date-fns/locale/pt';
 
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {Container, DateButton, DateText} from './styles';
 
-export default function DateInput({date, onChange}) {
+export default function DateInput({
+  date,
+  onChange,
+  hideDateTimePicker,
+  showDateTimePicker,
+  isDateTimePickerVisible,
+}) {
   const dateFormatted = useMemo(
     () => format(date, "dd 'de' MMMM 'de' yyyy", {locale: pt}),
     [date]
   );
 
-  async function handleOpenPicker() {
-    const {action, year, month, day} = await DatePickerAndroid.open({
-      mode: 'spinner',
-      date,
-    });
-
-    if (action === DatePickerAndroid.dateSetAction) {
-      const selectedDate = new Date(year, month, day);
-      onChange(selectedDate);
-    }
+  function handleDatePicked(dat) {
+    onChange(dat);
+    hideDateTimePicker();
   }
 
   return (
     <Container>
-      <DateButton onPress={handleOpenPicker}>
+      <DateButton onPress={showDateTimePicker}>
         <Icon name="event" color="#FFF" size={20} />
         <DateText>{dateFormatted}</DateText>
       </DateButton>
+
+      <DateTimePicker
+        isVisible={isDateTimePickerVisible}
+        onConfirm={handleDatePicked}
+        onCancel={hideDateTimePicker}
+        mode="date"
+        locale={pt}
+      />
     </Container>
   );
 }
@@ -38,4 +47,7 @@ export default function DateInput({date, onChange}) {
 DateInput.propTypes = {
   onChange: PropTypes.func.isRequired,
   date: PropTypes.instanceOf(Date).isRequired,
+  hideDateTimePicker: PropTypes.func.isRequired,
+  showDateTimePicker: PropTypes.func.isRequired,
+  isDateTimePickerVisible: PropTypes.bool.isRequired,
 };

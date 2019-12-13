@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 import {TouchableOpacity} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import {RectButton} from 'react-native-gesture-handler';
 
 export const Container = styled.View`
   flex: 1;

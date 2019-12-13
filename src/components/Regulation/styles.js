@@ -4,7 +4,11 @@ export const Container = styled.SafeAreaView`
   flex: 1;
 `;
 export const Content = styled.ScrollView.attrs({
-  contentContainerStyle: {padding: 30, paddingBottom: 120},
+  contentContainerStyle: {
+    padding: 30,
+    flexGrow: 1,
+    paddingBottom: 120,
+  },
   showsVerticalScrollIndicator: false,
 })``;
 

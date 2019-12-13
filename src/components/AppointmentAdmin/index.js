@@ -79,7 +79,7 @@ export default function AppointmentAdmin({
             </InfoStatusChamada>
           )}
 
-          <Time>Agendado {dateParsed}</Time>
+          <Time>Agendado para {dateParsed}</Time>
         </Info>
       </Left>
       <ContainerButton>
