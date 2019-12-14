@@ -101,7 +101,8 @@ function Dashboard({isFocused, navigation}) {
       return;
     }
 
-    setLoading(true);
+    // setLoading(true);
+    mudaStatus(appointmentId, statusAppointment.atendendo);
     await api
       .get(`appointment/${appointmentId}/provider`, {
         params: {
@@ -109,17 +110,38 @@ function Dashboard({isFocused, navigation}) {
         },
       })
       .then(res => {
-        setLoading(false);
-        setAppointments(res.data);
-        mudaStatus(appointmentId, res.data.status);
+        //setLoading(false);
+        // setAppointments(res.data);
       })
       .catch(() => {
-        setLoading(false);
+        // setLoading(false);
+        mudaStatus(appointmentId, statusAppointment.aguardando);
+        Alert.alert(
+          'Atenção !',
+          'Não foi possível fazer o atendimento, tente novamente!'
+        );
       });
   }
 
   async function onFinally(appointmentId) {
-    setLoading(true);
+    //setLoading(true);
+    /**.filter(x => (x !== undefined ? x : '')); */
+    console.log('Old list:', appointments);
+    const fin = appointments
+      .filter(appoint => {
+        if (appoint.id !== appointmentId) {
+          return appoint;
+        }
+      })
+      .map(p => {
+        const objCopy = Object.assign({}, p);
+
+        objCopy.index -= 1;
+        return objCopy;
+      });
+    setAppointments(fin);
+    console.log('Finnnn:::', fin);
+
     await api
       .get(`appointment/${appointmentId}/finally`, {
         params: {
@@ -127,11 +149,16 @@ function Dashboard({isFocused, navigation}) {
         },
       })
       .then(res => {
-        setLoading(false);
-        setAppointments(res.data);
+        //setLoading(false);
+        // setAppointments(res.data);
       })
       .catch(() => {
-        setLoading(false);
+        //  setLoading(false);
+        mudaStatus(appointmentId, statusAppointment.atendendo);
+        Alert.alert(
+          'Atenção !',
+          'Não foi possível finalizar o atendimento, tente novamente!'
+        );
       });
   }
 
