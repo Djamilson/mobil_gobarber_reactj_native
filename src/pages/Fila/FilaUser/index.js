@@ -66,7 +66,6 @@ export default function FilaUser({navigation}) {
 
       io.on('finally', dta => {
         console.log('Pela a barba do profeta:::::', dta);
-
         console.log('Pela a barba do profeta:', dta.listAppointments);
         const {listAppointments, appointmentSelect: appoint, user_id} = dta;
 
@@ -79,6 +78,10 @@ export default function FilaUser({navigation}) {
           setDataFormat(dateFormatted(appoint.date));
         }
         setAppointments(listAppointments);
+      });
+
+      io.on('cancel', novaLista => {
+        setAppointments(novaLista);
       });
     }
 

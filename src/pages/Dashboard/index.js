@@ -132,20 +132,32 @@ function Dashboard({isFocused, navigation}) {
     );
     await api
       .delete(`appointments/${id}`)
-      /*await api
+      /* await api
       .get(`appointment/${id}/finally`, {
         params: {
           status: enumAppointment.cancelado,
           idProvider,
         },
-      })*/
+      }) */
       .then(res => {
-        //setLoading(false);
-        //setAppointments(res.data);
+        // setLoading(false);
+        // setAppointments(res.data);
         Alert.alert('Sucesso', 'Agendamento cancelado com sucesso!');
       })
-      .catch(() => {
+      .catch(error => {
+        const str = error.toString();
+        const final = str.replace(/\D/g, '');
+
         setAppointments(appointmentsOld);
+
+        if (final === '500') {
+          Alert.alert(
+            'Atenção',
+            'Essa reserva não pode ser cancelada no momento, pois o cancelamento deve ser com duas horas de antecedencia!'
+          );
+          return;
+        }
+
         Alert.alert(
           'Atenção',
           'Não foi possível fazer o cancelamento, tente novamente!'
@@ -167,7 +179,7 @@ function Dashboard({isFocused, navigation}) {
           : appointment
       )
     );
-  }*/
+  } */
 
   function handleChamaCancel(id) {
     Alert.alert(
