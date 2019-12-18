@@ -17,6 +17,7 @@ import {Container, List} from './styles';
 
 function Dashboard({isFocused, navigation}) {
   const [appointments, setAppointments] = useState([]);
+  const [appointmentsOld, setAppointmentsOld] = useState([]);
   const [loading, setLoading] = useState(false);
   const profile = useSelector(state => state.user.profile);
 
@@ -55,30 +56,6 @@ function Dashboard({isFocused, navigation}) {
     }
   }, [isFocused]);
 
-  async function handleCancel(id, idProvider) {
-    setLoading(true);
-    await api
-      .get(`appointment/${id}/finally`, {
-        params: {
-          status: statusAppointment.cancelado,
-          idProvider,
-        },
-      })
-      .then(res => {
-        setLoading(false);
-        setAppointments(res.data);
-        Alert.alert('Sucesso', 'Agendamento cancelado com sucesso!');
-      })
-      .catch(() => {
-        setLoading(false);
-
-        Alert.alert(
-          'Atenção',
-          'Não foi possível fazer o cancelamento, tente novamente!'
-        );
-      });
-  }
-
   function mudaStatus(appointment_id, status) {
     const novoStatus = appointments.map(appointment =>
       appointment.id === appointment_id
@@ -90,6 +67,37 @@ function Dashboard({isFocused, navigation}) {
     );
 
     setAppointments(novoStatus);
+  }
+
+  async function handleCancel(id, idProvider) {
+    setAppointmentsOld(appointments);
+    setAppointments(
+      appointments
+        .filter(appointment => appointment.id !== id)
+        .map((ap, index) => {
+          return {...ap, index};
+        })
+    );
+
+    await api
+      .get(`appointment/${id}/finally`, {
+        params: {
+          status: statusAppointment.cancelado,
+          idProvider,
+        },
+      })
+      .then(res => {
+        //setLoading(false);
+        //setAppointments(res.data);
+        Alert.alert('Sucesso', 'Agendamento cancelado com sucesso!');
+      })
+      .catch(() => {
+        setAppointments(appointmentsOld);
+        Alert.alert(
+          'Atenção',
+          'Não foi possível fazer o cancelamento, tente novamente!'
+        );
+      });
   }
 
   async function onAtender(appointmentId, index) {
@@ -110,7 +118,7 @@ function Dashboard({isFocused, navigation}) {
         },
       })
       .then(res => {
-        //setLoading(false);
+        // setLoading(false);
         // setAppointments(res.data);
       })
       .catch(() => {
@@ -124,8 +132,8 @@ function Dashboard({isFocused, navigation}) {
   }
 
   async function onFinally(appointmentId) {
-    //setLoading(true);
-    /**.filter(x => (x !== undefined ? x : '')); */
+    // setLoading(true);
+    /** .filter(x => (x !== undefined ? x : '')); */
     console.log('Old list:', appointments);
     const fin = appointments
       .filter(appoint => {
@@ -134,7 +142,7 @@ function Dashboard({isFocused, navigation}) {
         }
       })
       .map(p => {
-        const objCopy = Object.assign({}, p);
+        const objCopy = {...p};
 
         objCopy.index -= 1;
         return objCopy;
@@ -149,7 +157,7 @@ function Dashboard({isFocused, navigation}) {
         },
       })
       .then(res => {
-        //setLoading(false);
+        // setLoading(false);
         // setAppointments(res.data);
       })
       .catch(() => {
@@ -195,7 +203,9 @@ function Dashboard({isFocused, navigation}) {
               <AppointmentAdmin
                 onAtender={() => onAtender(item.id, item.index)}
                 onFinally={() => onFinally(item.id)}
-                onCancel={() => handleChamaCancel(item.id, item.user.id)}
+                onCancel={() =>
+                  handleChamaCancel(item.id, item.user.id, item.status)
+                }
                 data={item}
               />
             )}
