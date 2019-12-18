@@ -28,27 +28,46 @@ function Dashboard({isFocused, navigation}) {
       .then(res => {
         setLoading(false);
         setAppointments(res.data);
+        console.log('==>>>:', res.data);
       })
       .catch(() => {
         setLoading(false);
       });
   }
 
+  function removerAppoint(id) {
+
+    setAppointments(
+      appointments
+        .filter(appointment => appointment.id !== id)
+        .map((ap, index) => {
+          return {...ap, index};
+        })
+    );
+  }
+
   useEffect(() => {
     function subscribeToNewFiles(id) {
       const io = socket(`http://${host.WEBHOST}:${host.PORT}`, {
-        query: {id, value: 'dashboard'},
+        query: {id, value: 'dashboard_admin'},
       });
 
       io.on('appointment', dta => {
         setAppointments(dta);
+      });
+
+      io.on('cancel', idAppointment => {
+        console.log('Cancelei::: Recebendo do dash:::', idAppointment);
+        console.log('==>:', appointments);
+        const {id: id_} = idAppointment;
+        removerAppoint(Number(id_));
       });
     }
 
     if (isFocused) {
       subscribeToNewFiles(profile.id);
     }
-  }, [appointments, isFocused, profile]);
+  }, [appointments, isFocused, profile, removerAppoint]);
 
   useEffect(() => {
     if (isFocused) {
@@ -71,13 +90,7 @@ function Dashboard({isFocused, navigation}) {
 
   async function handleCancel(id, idProvider) {
     setAppointmentsOld(appointments);
-    setAppointments(
-      appointments
-        .filter(appointment => appointment.id !== id)
-        .map((ap, index) => {
-          return {...ap, index};
-        })
-    );
+    removerAppoint(id);
 
     await api
       .get(`appointment/${id}/finally`, {
@@ -87,8 +100,8 @@ function Dashboard({isFocused, navigation}) {
         },
       })
       .then(res => {
-        //setLoading(false);
-        //setAppointments(res.data);
+        // setLoading(false);
+        // setAppointments(res.data);
         Alert.alert('Sucesso', 'Agendamento cancelado com sucesso!');
       })
       .catch(() => {
@@ -103,7 +116,7 @@ function Dashboard({isFocused, navigation}) {
   async function onAtender(appointmentId, index) {
     if (index !== 0) {
       Alert.alert(
-        'Atenção !',
+        'Atenção!',
         'Não pode atender esse cliente no momento, você deve finalizar o atendimento anterior!'
       );
       return;
