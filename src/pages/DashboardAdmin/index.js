@@ -28,7 +28,6 @@ function Dashboard({isFocused, navigation}) {
       .then(res => {
         setLoading(false);
         setAppointments(res.data);
-        console.log('==>>>:', res.data);
       })
       .catch(() => {
         setLoading(false);
@@ -36,7 +35,6 @@ function Dashboard({isFocused, navigation}) {
   }
 
   function removerAppoint(id) {
-
     setAppointments(
       appointments
         .filter(appointment => appointment.id !== id)
@@ -57,8 +55,6 @@ function Dashboard({isFocused, navigation}) {
       });
 
       io.on('cancel', idAppointment => {
-        console.log('Cancelei::: Recebendo do dash:::', idAppointment);
-        console.log('==>:', appointments);
         const {id: id_} = idAppointment;
         removerAppoint(Number(id_));
       });
@@ -67,7 +63,7 @@ function Dashboard({isFocused, navigation}) {
     if (isFocused) {
       subscribeToNewFiles(profile.id);
     }
-  }, [appointments, isFocused, profile, removerAppoint]);
+  }, [isFocused, profile, removerAppoint]);
 
   useEffect(() => {
     if (isFocused) {
@@ -99,9 +95,7 @@ function Dashboard({isFocused, navigation}) {
           idProvider,
         },
       })
-      .then(res => {
-        // setLoading(false);
-        // setAppointments(res.data);
+      .then(() => {
         Alert.alert('Sucesso', 'Agendamento cancelado com sucesso!');
       })
       .catch(() => {
@@ -122,7 +116,6 @@ function Dashboard({isFocused, navigation}) {
       return;
     }
 
-    // setLoading(true);
     mudaStatus(appointmentId, statusAppointment.atendendo);
     await api
       .get(`appointment/${appointmentId}/provider`, {
@@ -130,12 +123,7 @@ function Dashboard({isFocused, navigation}) {
           status: statusAppointment.atendendo,
         },
       })
-      .then(res => {
-        // setLoading(false);
-        // setAppointments(res.data);
-      })
       .catch(() => {
-        // setLoading(false);
         mudaStatus(appointmentId, statusAppointment.aguardando);
         Alert.alert(
           'Atenção !',
@@ -145,9 +133,6 @@ function Dashboard({isFocused, navigation}) {
   }
 
   async function onFinally(appointmentId) {
-    // setLoading(true);
-    /** .filter(x => (x !== undefined ? x : '')); */
-    console.log('Old list:', appointments);
     const fin = appointments
       .filter(appoint => {
         if (appoint.id !== appointmentId) {
@@ -161,17 +146,12 @@ function Dashboard({isFocused, navigation}) {
         return objCopy;
       });
     setAppointments(fin);
-    console.log('Finnnn:::', fin);
 
     await api
       .get(`appointment/${appointmentId}/finally`, {
         params: {
           status: statusAppointment.finalizado,
         },
-      })
-      .then(res => {
-        // setLoading(false);
-        // setAppointments(res.data);
       })
       .catch(() => {
         //  setLoading(false);

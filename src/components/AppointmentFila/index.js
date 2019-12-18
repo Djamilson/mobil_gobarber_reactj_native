@@ -17,7 +17,6 @@ import {
 } from './styles';
 
 export default function AppointmentFila({data, onCancel}) {
-  console.log('Here::', data);
   return (
     <Container past={data.past} agendar={Boolean(data.agendar)}>
       <Left>
