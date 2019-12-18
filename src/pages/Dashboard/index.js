@@ -21,6 +21,7 @@ import {Container, List} from './styles';
 function Dashboard({isFocused, navigation}) {
   const profile = useSelector(state => state.user.profile);
   const [appointments, setAppointments] = useState([]);
+  const [appointmentsOld, setAppointmentsOld] = useState([]);
   const [loading, setLoading] = useState(false);
   const [messageCanceled, setMessageCanceled] = useState(false);
   const [dataFormat, setDataFormat] = useState();
@@ -86,25 +87,17 @@ function Dashboard({isFocused, navigation}) {
                 return appointment;
               }
 
-              console.log('appointment', appointment);
               appSelected = appointment;
             })
             .filter(x => (x !== undefined ? x : ''));
-
-          console.log('Data', appointmentSelect);
 
           setAppointments(listTes);
 
           if (dta.status === enumAppointment.cancelado) {
             setMessageCanceled(!messageCanceled);
             setAppointmentSelect(appSelected.provider.name);
-            console.log('Tenho que guarda esse data: ', appointmentSelect);
-            console.log(
-              'appSelected.provider.name: ',
-              appSelected.provider.name
-            );
+
             setDataFormat(dateFormatted(appSelected.date));
-            // setDataFormat(appSelected.date);
           }
         }
       });
@@ -129,6 +122,39 @@ function Dashboard({isFocused, navigation}) {
   }, [isFocused]);
 
   async function handleCancel(id) {
+    setAppointmentsOld(appointments);
+    setAppointments(
+      appointments
+        .filter(appointment => appointment.id !== id)
+        .map((ap, index) => {
+          return {...ap, index};
+        })
+    );
+    await api
+      .delete(`appointments/${id}`)
+      /*await api
+      .get(`appointment/${id}/finally`, {
+        params: {
+          status: enumAppointment.cancelado,
+          idProvider,
+        },
+      })*/
+      .then(res => {
+        //setLoading(false);
+        //setAppointments(res.data);
+        Alert.alert('Sucesso', 'Agendamento cancelado com sucesso!');
+      })
+      .catch(() => {
+        setAppointments(appointmentsOld);
+        Alert.alert(
+          'Atenção',
+          'Não foi possível fazer o cancelamento, tente novamente!'
+        );
+      });
+  }
+
+  /*
+  async function handleCancel(id) {
     const response = await api.delete(`appointments/${id}`);
     Alert.alert('Sucesso', 'Agendamento cancelado com sucesso!');
     setAppointments(
@@ -141,7 +167,7 @@ function Dashboard({isFocused, navigation}) {
           : appointment
       )
     );
-  }
+  }*/
 
   function handleChamaCancel(id) {
     Alert.alert(

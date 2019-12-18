@@ -2,17 +2,16 @@ import styled from 'styled-components/native';
 import {TouchableOpacity} from 'react-native';
 
 export const Container = styled.View`
-  margin-top: 60px;
-  margin-bottom: 15px;
-  padding: 20px;
-  border-radius: 4px;
-  background: #fff;
-
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
 
+  margin-top: 60px;
+  margin-bottom: 85px;
+  padding: 20px;
+  border-radius: 4px;
+  background: #fff;
   margin-left: 25px;
   margin-right: 25px;
 `;
