@@ -14,6 +14,8 @@ import App from './App';
 YellowBox.ignoreWarnings([
   'Warning: componentWillMount is deprecated',
   'Warning: componentWillReceiveProps is deprecated',
+  'Unrecognized WebSocket',
+  'Unrecognized WebSocket connection option(s)',
 ]);
 
 const codePushOptions = {checkFrequency: CodePush.CheckFrequency.ON_APP_RESUME};

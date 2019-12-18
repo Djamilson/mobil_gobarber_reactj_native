@@ -1,10 +1,8 @@
 import {Alert} from 'react-native';
-import {takeLatest, call, put, all} from 'redux-saga/effects';
-
+import {all, call, put, takeLatest} from 'redux-saga/effects';
 import api from '~/services/api';
-
-import {signInSuccess, signFailure} from './actions';
-import {signUpSuccess, signInFaileru} from '../user/actions';
+import {signInFaileru, signUpSuccess} from '../user/actions';
+import {signFailure, signInSuccess} from './actions';
 
 export function* signIn({payload}) {
   try {
@@ -17,7 +15,7 @@ export function* signIn({payload}) {
 
     const {token, user} = response.data;
 
-    if (user.provider) {
+    /* if (user.provider) {
       Alert.alert(
         'Erro no login',
         'Usuário é prestador de serviço, acessa a opção web!'
@@ -25,12 +23,20 @@ export function* signIn({payload}) {
 
       yield put(signFailure());
       return;
-    }
+    } */
 
     api.defaults.headers.Authorization = ` Bearer ${token}`;
-
+    // const {last_login_at} = user;
     yield put(signInSuccess(token, user));
 
+    /*
+    if (!last_login_at) {
+    yield put(signInSuccess(token, user));
+
+      return NavigationService.navigate('RegulationReview');
+    } */
+
+    // return NavigationService.navigate('rota')
     // history.push('/dashboard');
   } catch (error) {
     const str = error.toString();
@@ -78,6 +84,22 @@ export function* signIn({payload}) {
       return;
     }
 
+    if (final === '429') {
+      Alert.alert(
+        'Erro no login',
+        'Não foi possível conectar ao servidor, tente mais tarde!'
+      );
+      yield put(signFailure());
+      return;
+    }
+
+    if (str === 'Error: Network Error') {
+      Alert.alert('Erro no login', 'Você não está conectado à internet!');
+
+      yield put(signFailure());
+      return;
+    }
+
     Alert.alert('Erro no login', 'Não foi possível conectar, tente novamente!');
     yield put(signFailure());
   }
@@ -85,12 +107,13 @@ export function* signIn({payload}) {
 
 export function* signUp({payload}) {
   try {
-    const {name, email, password, resetForm} = payload;
+    const {name, email, password, privacy, resetForm} = payload;
 
     yield call(api.post, 'usersmobil', {
       name,
       email,
       password,
+      privacy,
     });
 
     resetForm();
@@ -100,9 +123,6 @@ export function* signUp({payload}) {
       `Cadastro efetuado, acesse o email ${email} para a tivar sua conta!`
     );
     yield put(signUpSuccess());
-    //  yield put(NavigationActions.navigate('SignIn'));
-
-    //    history.push('/dashboard');
   } catch (error) {
     const str = error.toString();
     const final = str.replace(/\D/g, '');
@@ -142,6 +162,39 @@ export function* signUp({payload}) {
   }
 }
 
+export function* acceptRegulationUp({payload}) {
+  try {
+    const {token, newPrivacy, navigate} = payload.token;
+
+    const resp = yield call(api.get, 'accept_regulation', {
+      params: {
+        newPrivacy,
+      },
+    });
+
+    if (newPrivacy) {
+      Alert.alert('Sucesso', 'Termos aceitos com sucesso!');
+      yield put(signInSuccess(token, resp.data));
+      navigate('App');
+      return;
+    }
+
+    Alert.alert('Sucesso', 'Os termos não foram aceitos!');
+
+    yield put(signInSuccess(token, resp.data));
+    navigate('RegulationReview');
+    return;
+  } catch (error) {
+    //console.log('ERRRRRo::', error);
+    Alert.alert(
+      'Error',
+      'Não foi possível aceitar os termos, tente novamente!'
+    );
+
+    yield put(signInFaileru());
+  }
+}
+
 export function setToken({payload}) {
   if (!payload) return;
   const {token} = payload.auth;
@@ -155,5 +208,6 @@ export default all([
   takeLatest('persist/REHYDRATE', setToken),
   takeLatest('@auth/SIGN_IN_REQUEST', signIn),
   takeLatest('@auth/SIGN_UP_REQUEST', signUp),
+  takeLatest('@auth/ACCEPT_REGULATION', acceptRegulationUp),
   takeLatest('@user/SIGN_UP_SUCCESS', signUp),
 ]);

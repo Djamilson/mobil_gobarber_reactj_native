@@ -5,7 +5,17 @@ import pt from 'date-fns/locale/pt';
 import {TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
-import {Container, Left, Avatar, Info, Time, Name} from './styles';
+import {
+  Container,
+  Left,
+  Avatar,
+  Info,
+  InfoStatus,
+  StatusLabel,
+  Status,
+  Time,
+  Name,
+} from './styles';
 
 export default function Appointment({data, onCancel}) {
   const dateParsed = useMemo(() => {
@@ -14,8 +24,9 @@ export default function Appointment({data, onCancel}) {
       addSuffix: true,
     });
   }, [data.date]);
+
   return (
-    <Container past={data.past}>
+    <Container past={data.past} agendar={Boolean(data.agendar)}>
       <Left>
         <Avatar
           source={{
@@ -25,8 +36,13 @@ export default function Appointment({data, onCancel}) {
           }}
         />
         <Info>
-          <Name> {data.provider.name}</Name>
-          <Time> {dateParsed}</Time>
+          <StatusLabel>Atendimento com o:</StatusLabel>
+          <Name>{data.provider.name}</Name>
+          <InfoStatus>
+            <StatusLabel>Status</StatusLabel>
+            <Status> {data.status}</Status>
+          </InfoStatus>
+          <Time>{dateParsed}</Time>
         </Info>
       </Left>
       {data.cancelable && !data.canceled_at && (
@@ -43,6 +59,8 @@ Appointment.propTypes = {
     provider: PropTypes.object,
     cancelable: PropTypes.bool,
     date: PropTypes.string,
+    status: PropTypes.string,
+    agendar: PropTypes.bool,
     past: PropTypes.bool,
     canceled_at: PropTypes.string,
   }).isRequired,

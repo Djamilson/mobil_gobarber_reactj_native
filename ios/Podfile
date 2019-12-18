@@ -49,6 +49,8 @@ target 'GoBarbeMobil' do
 
   pod 'RNStyledDialogs', :path => '../node_modules/react-native-styled-dialogs'
 
+  pod 'RNDateTimePicker', :path => '../node_modules/@react-native-community/datetimepicker'
+
   target 'GoBarbeMobilTests' do
     inherit! :search_paths
     # Pods for testing

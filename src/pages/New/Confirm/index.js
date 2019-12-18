@@ -13,8 +13,10 @@ import Background from '~/components/Background';
 import {Container, Avatar, Name, Time, SubmitButton} from './styles';
 
 export default function Confirm({navigation}) {
-  const provider = navigation.getParam('provider');
+  const {id, status, agendar, name, avatar} = navigation.getParam('provider');
+
   const time = navigation.getParam('time');
+  const router = navigation.getParam('router');
 
   const dateFormatted = useMemo(
     () =>
@@ -25,10 +27,17 @@ export default function Confirm({navigation}) {
   );
 
   async function handleAddAppointment() {
-    await api.post('appointments', {
-      provider_id: provider.id,
-      date: time,
-    });
+    await api
+      .post(router, {
+        provider_id: id,
+        date: time,
+        status,
+        agendar,
+      })
+      .catch(error => {
+        // Your error is here!
+        // console.log('EEERRROU:::', error);
+      });
 
     navigation.navigate('Dashboard');
   }
@@ -38,14 +47,14 @@ export default function Confirm({navigation}) {
       <Container>
         <Avatar
           source={{
-            uri: provider.avatar
-              ? provider.avatar.url
-              : `https://api.adorable.io/avatar/50/${provider.name}.png`,
+            uri: avatar
+              ? avatar.url
+              : `https://api.adorable.io/avatar/50/${name}.png`,
           }}
         />
-        <Name>{provider.name}</Name>
+        <Name>{name}</Name>
         <Time>{dateFormatted}</Time>
-        <SubmitButton onPress={handleAddAppointment}>
+        <SubmitButton loading={false} onPress={handleAddAppointment}>
           Confirmar Agendamento
         </SubmitButton>
       </Container>
@@ -54,7 +63,7 @@ export default function Confirm({navigation}) {
 }
 
 Confirm.navigationOptions = ({navigation}) => ({
-  title: 'Confrimar Agendamento',
+  title: 'Confirmar Agendamento',
   headerLeft: () => (
     <TouchableOpacity
       onPress={() => {

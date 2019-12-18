@@ -12,10 +12,10 @@ export function signInSuccess(token, user) {
   };
 }
 
-export function signUpRequest(name, email, password, resetForm) {
+export function signUpRequest(name, email, password, privacy, resetForm) {
   return {
     type: '@auth/SIGN_UP_REQUEST',
-    payload: {name, email, password, resetForm},
+    payload: {name, email, password, privacy, resetForm},
   };
 }
 
@@ -41,5 +41,12 @@ export function sigUpFailure() {
 export function signOut() {
   return {
     type: '@auth/SIGN_OUT',
+  };
+}
+
+export function acceptionRegulation(token, newPrivacy, navigate) {
+  return {
+    type: '@auth/ACCEPT_REGULATION',
+    payload: {token, newPrivacy, navigate},
   };
 }
