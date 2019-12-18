@@ -65,18 +65,20 @@ export default function FilaUser({navigation}) {
       });
 
       io.on('finally', dta => {
+        console.log('Pela a barba do profeta:::::', dta);
+
         console.log('Pela a barba do profeta:', dta.listAppointments);
         const {listAppointments, appointmentSelect: appoint, user_id} = dta;
 
         if (
-          appoint.status === enumAppointment.cancelado &&
+          dta.status === enumAppointment.cancelado &&
           user_id === profile.id
         ) {
-          setMessageCanceled(!messageCanceled);
-          console.log('Tenho que guarda esse data: ', appoint);
-          setAppointments(listAppointments);
-          // setDataFormat(dateFormatted(appoint.date));
+          setAppointmentSelect(appoint.provider.name);
+          setMessageCanceled(true);
+          setDataFormat(dateFormatted(appoint.date));
         }
+        setAppointments(listAppointments);
       });
     }
 
@@ -97,7 +99,7 @@ export default function FilaUser({navigation}) {
         .then(res => {
           setLoading(false);
           console.log('Estou aqui res.data', res.data);
-          console.log('ççççç aqui res.data', res.data);
+          //  console.log('ççççç aqui res.data', res.data);
 
           setAppointments(res.data);
         })
@@ -108,26 +110,32 @@ export default function FilaUser({navigation}) {
     loadAppointments();
   }, [provider.id]);
 
-  async function handleCancel(id) {
-    setLoading(true);
+  function mudaStatus(appointment_id, status) {
+    const novoStatus = appointments.map(appointment =>
+      appointment.id === appointment_id
+        ? {
+            ...appointment,
+            status,
+          }
+        : appointment
+    );
+
+    setAppointments(novoStatus);
+  }
+
+  async function handleCancel(id, oldStatus) {
+    // setLoading(true);
+    Alert.alert('Sucesso', 'Agendamento cancelado com sucesso!');
+
+    mudaStatus(id, enumAppointment.cancelado);
+
     await api
       .delete(`appointments/${id}`)
       .then(res => {
-        setLoading(false);
-        Alert.alert('Sucesso', 'Agendamento cancelado com sucesso!');
-        setAppointments(
-          appointments.map(appointment =>
-            appointment.id === id
-              ? {
-                  ...appointment,
-                  canceled_at: res.data.canceled_at,
-                }
-              : appointment
-          )
-        );
+        // setLoading(false);
       })
       .catch(() => {
-        setLoading(false);
+        mudaStatus(id, oldStatus);
         Alert.alert(
           'Atenção',
           'Não foi possível fazer o cancelamento no momento, tente novamente!'
@@ -149,7 +157,7 @@ export default function FilaUser({navigation}) {
           text: 'Sim',
           onPress: () => {
             setSelecioneProvaider(item);
-            handleCancel(id);
+            handleCancel(id, item.status);
           },
         },
       ],
@@ -178,7 +186,8 @@ export default function FilaUser({navigation}) {
             )}
           />
         )}
-        {messageCanceled && (
+
+        {messageCanceled && dataFormat !== undefined && (
           <MessageCanceled
             nameIcon="exclamation-triangle"
             closeMessage={closeMessage}
