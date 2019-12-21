@@ -1,6 +1,9 @@
 import {Alert} from 'react-native';
+
 import {all, call, put, takeLatest} from 'redux-saga/effects';
+
 import api from '~/services/api';
+
 import {signInFaileru, signUpSuccess} from '../user/actions';
 import {signFailure, signInSuccess} from './actions';
 
@@ -172,20 +175,18 @@ export function* acceptRegulationUp({payload}) {
       },
     });
 
+    yield put(signInSuccess(token, resp.data));
+
     if (newPrivacy) {
       Alert.alert('Sucesso', 'Termos aceitos com sucesso!');
-      yield put(signInSuccess(token, resp.data));
       navigate('App');
       return;
     }
 
     Alert.alert('Sucesso', 'Os termos não foram aceitos!');
-
-    yield put(signInSuccess(token, resp.data));
     navigate('RegulationReview');
-    return;
   } catch (error) {
-    //console.log('ERRRRRo::', error);
+    // console.log('ERRRRRo::', error);
     Alert.alert(
       'Error',
       'Não foi possível aceitar os termos, tente novamente!'

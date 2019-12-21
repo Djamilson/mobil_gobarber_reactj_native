@@ -1,7 +1,9 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import {TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+
+import PropTypes from 'prop-types';
+
 import enumAppointment from '~/enum/appointments';
 
 import {

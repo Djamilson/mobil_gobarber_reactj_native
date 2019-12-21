@@ -1,8 +1,9 @@
-import PropTypes from 'prop-types';
 import React, {useState} from 'react';
 import ModalReact from 'react-native-modal';
-
 import {useSelector, useDispatch} from 'react-redux';
+
+import PropTypes from 'prop-types';
+
 import Regulation from '~/components/Regulation';
 import {acceptionRegulation} from '~/store/modules/auth/actions';
 
@@ -21,6 +22,7 @@ export default function TermosCondicoes({
   toggleModal,
   isModalVisible,
   navigation,
+  isApproveButton,
 }) {
   const [privacy] = useState(useSelector(state => state));
   const dispatch = useDispatch();
@@ -44,9 +46,11 @@ export default function TermosCondicoes({
               <Regulation />
             </Item>
 
-            <ApproveButton onPress={handleAcceptRegulation}>
-              <ApproveButtonText>Não aceito os termos</ApproveButtonText>
-            </ApproveButton>
+            {isApproveButton && (
+              <ApproveButton onPress={handleAcceptRegulation}>
+                <ApproveButtonText>Não aceito os termos</ApproveButtonText>
+              </ApproveButton>
+            )}
           </Background>
           <Footer>
             <NoButton loading onPress={toggleModal}>
@@ -62,6 +66,7 @@ export default function TermosCondicoes({
 TermosCondicoes.propTypes = {
   toggleModal: PropTypes.func.isRequired,
   isModalVisible: PropTypes.bool.isRequired,
+  isApproveButton: PropTypes.bool.isRequired,
   navigation: PropTypes.shape({
     navigate: PropTypes.func.isRequired,
   }).isRequired,

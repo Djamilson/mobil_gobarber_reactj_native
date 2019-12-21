@@ -1,4 +1,5 @@
 import React from 'react';
+
 import {Container, Content, TRegulation, Title} from './styles';
 
 export default function Regulation() {

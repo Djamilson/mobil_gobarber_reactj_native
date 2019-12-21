@@ -1,15 +1,14 @@
 import React, {useEffect, useState} from 'react';
-import PropTypes from 'prop-types';
 import {TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
-import api from '~/services/api';
+import PropTypes from 'prop-types';
 
 import Background from '~/components/Background';
 import DateInput from '~/components/DateInput';
-import Message from '~/components/Message';
-
 import Loading from '~/components/Loading';
+import Message from '~/components/Message';
+import api from '~/services/api';
 
 import {Container, HourList, Hour, Title} from './styles';
 

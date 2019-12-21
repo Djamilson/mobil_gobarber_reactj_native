@@ -1,11 +1,14 @@
-import {formatRelative, parseISO} from 'date-fns';
-import pt from 'date-fns/locale/pt';
-import PropTypes from 'prop-types';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useMemo} from 'react';
 import {Alert, TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {useSelector} from 'react-redux';
+
+import PropTypes from 'prop-types';
+
+import {formatRelative, parseISO} from 'date-fns';
+import pt from 'date-fns/locale/pt';
 import socket from 'socket.io-client';
+
 import AppointmentFila from '~/components/AppointmentFila';
 import Background from '~/components/Background';
 import Loading from '~/components/Loading';
@@ -14,6 +17,7 @@ import MessageCanceled from '~/components/MessageCancel';
 import host from '~/config/host';
 import enumAppointment from '~/enum/appointments';
 import api from '~/services/api';
+
 import {Container, Heder, List} from './styles';
 
 export default function FilaUser({navigation}) {
@@ -42,12 +46,18 @@ export default function FilaUser({navigation}) {
     setDataFormat(dateFormatted(item.data));
   }
 
-  useEffect(() => {
-    function subscribeToNewFiles(id) {
-      const io = socket(`http://${host.WEBHOST}:${host.PORT}`, {
-        query: {id, value: 'fila'},
-      });
+  const {id} = profile;
 
+  const io = useMemo(
+    () =>
+      socket(`http://${host.WEBHOST}:${host.PORT}`, {
+        query: {id, value: 'fila'},
+      }),
+    [id]
+  );
+
+  useEffect(() => {
+    function subscribeToNewFiles() {
       io.on('atender', dta => {
         const listTes = appointments.map(appointment => {
           if (appointment.id === dta.id) {
@@ -65,14 +75,9 @@ export default function FilaUser({navigation}) {
       });
 
       io.on('finally', dta => {
-        console.log('Pela a barba do profeta:::::', dta);
-        console.log('Pela a barba do profeta:', dta.listAppointments);
         const {listAppointments, appointmentSelect: appoint, user_id} = dta;
 
-        if (
-          dta.status === enumAppointment.cancelado &&
-          user_id === profile.id
-        ) {
+        if (dta.status === enumAppointment.cancelado && user_id === id) {
           setAppointmentSelect(appoint.provider.name);
           setMessageCanceled(true);
           setDataFormat(dateFormatted(appoint.date));
@@ -85,13 +90,14 @@ export default function FilaUser({navigation}) {
       });
     }
 
-    subscribeToNewFiles(profile.id);
+    subscribeToNewFiles();
   }, [
     appointmentSelect,
     appointments,
     appointments.length,
+    id,
+    io,
     messageCanceled,
-    profile.id,
   ]);
 
   useEffect(() => {
@@ -101,9 +107,6 @@ export default function FilaUser({navigation}) {
         .get(`appointments/${provider.id}/fila?page=${page}`)
         .then(res => {
           setLoading(false);
-          console.log('Estou aqui res.data', res.data);
-          //  console.log('ççççç aqui res.data', res.data);
-
           setAppointments(res.data);
         })
         .catch(() => {
@@ -126,27 +129,22 @@ export default function FilaUser({navigation}) {
     setAppointments(novoStatus);
   }
 
-  async function handleCancel(id, oldStatus) {
+  async function handleCancel(idAppointmente, oldStatus) {
     // setLoading(true);
     Alert.alert('Sucesso', 'Agendamento cancelado com sucesso!');
 
-    mudaStatus(id, enumAppointment.cancelado);
+    mudaStatus(idAppointmente, enumAppointment.cancelado);
 
-    await api
-      .delete(`appointments/${id}`)
-      .then(res => {
-        // setLoading(false);
-      })
-      .catch(() => {
-        mudaStatus(id, oldStatus);
-        Alert.alert(
-          'Atenção',
-          'Não foi possível fazer o cancelamento no momento, tente novamente!'
-        );
-      });
+    await api.delete(`appointments/${idAppointmente}`).catch(() => {
+      mudaStatus(idAppointmente, oldStatus);
+      Alert.alert(
+        'Atenção',
+        'Não foi possível fazer o cancelamento no momento, tente novamente!'
+      );
+    });
   }
 
-  function handleChamaCancel(id, item) {
+  function handleChamaCancel(idAppointmente, item) {
     Alert.alert(
       `Cancelar agendamento`,
       'Tem certeza que cancelar esse agendamento?',
@@ -160,7 +158,7 @@ export default function FilaUser({navigation}) {
           text: 'Sim',
           onPress: () => {
             setSelecioneProvaider(item);
-            handleCancel(id, item.status);
+            handleCancel(idAppointmente, item.status);
           },
         },
       ],

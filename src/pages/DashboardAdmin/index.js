@@ -1,18 +1,22 @@
-import PropTypes from 'prop-types';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useMemo} from 'react';
 import {Alert} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {withNavigationFocus} from 'react-navigation';
 import {useSelector} from 'react-redux';
+
+import PropTypes from 'prop-types';
+
 import socket from 'socket.io-client';
+
 import AppointmentAdmin from '~/components/AppointmentAdmin';
 import Background from '~/components/Background';
+import Haeder from '~/components/Header';
 import Loading from '~/components/Loading';
 import Message from '~/components/Message';
 import host from '~/config/host';
 import statusAppointment from '~/enum/appointments';
 import api from '~/services/api';
-import Haeder from '~/components/Header';
+
 import {Container, List} from './styles';
 
 function Dashboard({isFocused, navigation}) {
@@ -34,22 +38,28 @@ function Dashboard({isFocused, navigation}) {
       });
   }
 
-  function removerAppoint(id) {
+  function removerAppoint(idAppointment) {
     setAppointments(
       appointments
-        .filter(appointment => appointment.id !== id)
+        .filter(appointment => appointment.id !== idAppointment)
         .map((ap, index) => {
           return {...ap, index};
         })
     );
   }
 
-  useEffect(() => {
-    function subscribeToNewFiles(id) {
-      const io = socket(`http://${host.WEBHOST}:${host.PORT}`, {
-        query: {id, value: 'dashboard_admin'},
-      });
+  const {id} = profile;
 
+  const io = useMemo(
+    () =>
+      socket(`http://${host.WEBHOST}:${host.PORT}`, {
+        query: {id, value: 'dashboard_admin'},
+      }),
+    [id]
+  );
+
+  useEffect(() => {
+    function subscribeToNewFiles() {
       io.on('appointment', dta => {
         setAppointments(dta);
       });
@@ -61,9 +71,9 @@ function Dashboard({isFocused, navigation}) {
     }
 
     if (isFocused) {
-      subscribeToNewFiles(profile.id);
+      subscribeToNewFiles();
     }
-  }, [isFocused, profile, removerAppoint]);
+  }, [io, isFocused, removerAppoint]);
 
   useEffect(() => {
     if (isFocused) {
@@ -84,12 +94,12 @@ function Dashboard({isFocused, navigation}) {
     setAppointments(novoStatus);
   }
 
-  async function handleCancel(id, idProvider) {
+  async function handleCancel(idAppointment, idProvider) {
     setAppointmentsOld(appointments);
-    removerAppoint(id);
+    removerAppoint(idAppointment);
 
     await api
-      .get(`appointment/${id}/finally`, {
+      .get(`appointment/${idAppointment}/finally`, {
         params: {
           status: statusAppointment.cancelado,
           idProvider,
@@ -107,7 +117,7 @@ function Dashboard({isFocused, navigation}) {
       });
   }
 
-  async function onAtender(appointmentId, index) {
+  async function onAtender(idAppointment, index) {
     if (index !== 0) {
       Alert.alert(
         'Atenção!',
@@ -116,15 +126,15 @@ function Dashboard({isFocused, navigation}) {
       return;
     }
 
-    mudaStatus(appointmentId, statusAppointment.atendendo);
+    mudaStatus(idAppointment, statusAppointment.atendendo);
     await api
-      .get(`appointment/${appointmentId}/provider`, {
+      .get(`appointment/${idAppointment}/provider`, {
         params: {
           status: statusAppointment.atendendo,
         },
       })
       .catch(() => {
-        mudaStatus(appointmentId, statusAppointment.aguardando);
+        mudaStatus(idAppointment, statusAppointment.aguardando);
         Alert.alert(
           'Atenção !',
           'Não foi possível fazer o atendimento, tente novamente!'
@@ -132,10 +142,10 @@ function Dashboard({isFocused, navigation}) {
       });
   }
 
-  async function onFinally(appointmentId) {
+  async function onFinally(idAppointment) {
     const fin = appointments
       .filter(appoint => {
-        if (appoint.id !== appointmentId) {
+        if (appoint.id !== idAppointment) {
           return appoint;
         }
       })
@@ -148,14 +158,14 @@ function Dashboard({isFocused, navigation}) {
     setAppointments(fin);
 
     await api
-      .get(`appointment/${appointmentId}/finally`, {
+      .get(`appointment/${idAppointment}/finally`, {
         params: {
           status: statusAppointment.finalizado,
         },
       })
       .catch(() => {
         //  setLoading(false);
-        mudaStatus(appointmentId, statusAppointment.atendendo);
+        mudaStatus(idAppointment, statusAppointment.atendendo);
         Alert.alert(
           'Atenção !',
           'Não foi possível finalizar o atendimento, tente novamente!'
@@ -163,7 +173,7 @@ function Dashboard({isFocused, navigation}) {
       });
   }
 
-  function handleChamaCancel(id, idProvider) {
+  function handleChamaCancel(idAppointment, idProvider) {
     Alert.alert(
       `Cancelar agendamento`,
       'Tem certeza que deseja cancelar esse agendamento?',
@@ -173,7 +183,7 @@ function Dashboard({isFocused, navigation}) {
           onPress: () => {},
           style: 'cancel',
         },
-        {text: 'Sim', onPress: () => handleCancel(id, idProvider)},
+        {text: 'Sim', onPress: () => handleCancel(idAppointment, idProvider)},
       ],
       {cancelable: false}
     );

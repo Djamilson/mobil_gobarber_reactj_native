@@ -1,11 +1,11 @@
 import React, {useState} from 'react';
-import PropTypes from 'prop-types';
-
 import {useSelector, useDispatch} from 'react-redux';
-import {acceptionRegulation} from '~/store/modules/auth/actions';
+
+import PropTypes from 'prop-types';
 
 import Background from '~/components/Background';
 import Regulation from '~/components/Regulation';
+import {acceptionRegulation} from '~/store/modules/auth/actions';
 
 import {ApproveButton, ApproveButtonText} from './styles';
 

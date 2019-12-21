@@ -4,13 +4,13 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import {createAppContainer, createSwitchNavigator} from 'react-navigation';
 import {createStackNavigator} from 'react-navigation-stack';
 import {createBottomTabNavigator} from 'react-navigation-tabs';
+
 import Dashboard from '~/pages/Dashboard';
 import ProvideAdmin from '~/pages/DashboardAdmin';
 import FilaUser from '~/pages/Fila/FilaUser';
 import SelectProviderFila from '~/pages/Fila/SelectProvider';
 import Confirm from '~/pages/New/Confirm';
 import SelectDateTime from '~/pages/New/SelectDateTime';
-// import Fila from '~/pages/Fila';
 import SelectProvider from '~/pages/New/SelectProvider';
 import Profile from '~/pages/Profile';
 import ResetPassword from '~/pages/RecuperaPassword';

@@ -1,12 +1,15 @@
-import {formatRelative, parseISO} from 'date-fns';
-import pt from 'date-fns/locale/pt';
-import PropTypes from 'prop-types';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useMemo} from 'react';
 import {Alert} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {withNavigationFocus} from 'react-navigation';
 import {useSelector} from 'react-redux';
+
+import PropTypes from 'prop-types';
+
+import {formatRelative, parseISO} from 'date-fns';
+import pt from 'date-fns/locale/pt';
 import socket from 'socket.io-client';
+
 import Appointment from '~/components/Appointment';
 import Background from '~/components/Background';
 import Haeder from '~/components/Header';
@@ -16,6 +19,7 @@ import MessageCanceled from '~/components/MessageCancel';
 import host from '~/config/host';
 import enumAppointment from '~/enum/appointments';
 import api from '~/services/api';
+
 import {Container, List} from './styles';
 
 function Dashboard({isFocused, navigation}) {
@@ -50,12 +54,18 @@ function Dashboard({isFocused, navigation}) {
     setMessageCanceled(!messageCanceled);
   }
 
-  useEffect(() => {
-    function subscribeToNewFiles(id) {
-      const io = socket(`http://${host.WEBHOST}:${host.PORT}`, {
-        query: {id, value: 'dashboard'},
-      });
+  const {id} = profile;
 
+  const io = useMemo(
+    () =>
+      socket(`http://${host.WEBHOST}:${host.PORT}`, {
+        query: {id, value: 'dashboard'},
+      }),
+    [id]
+  );
+
+  useEffect(() => {
+    function subscribeToNewFiles() {
       io.on('atender', dta => {
         const listTes = appointments.map(appointment => {
           if (appointment.id === dta.id) {
@@ -104,15 +114,15 @@ function Dashboard({isFocused, navigation}) {
     }
 
     if (isFocused) {
-      subscribeToNewFiles(profile.id);
+      subscribeToNewFiles();
     }
   }, [
     appointmentSelect,
     appointments,
     appointments.length,
+    io,
     isFocused,
     messageCanceled,
-    profile,
   ]);
 
   useEffect(() => {
@@ -121,17 +131,17 @@ function Dashboard({isFocused, navigation}) {
     }
   }, [isFocused]);
 
-  async function handleCancel(id) {
+  async function handleCancel(idAppointment) {
     setAppointmentsOld(appointments);
     setAppointments(
       appointments
-        .filter(appointment => appointment.id !== id)
+        .filter(appointment => appointment.id !== idAppointment)
         .map((ap, index) => {
           return {...ap, index};
         })
     );
     await api
-      .delete(`appointments/${id}`)
+      .delete(`appointments/${idAppointment}`)
       .then(() => {
         Alert.alert('Sucesso', 'Agendamento cancelado com sucesso!');
       })
@@ -145,7 +155,7 @@ function Dashboard({isFocused, navigation}) {
       });
   }
 
-  function handleChamaCancel(id) {
+  function handleChamaCancel(idAppointment) {
     Alert.alert(
       `Cancelar agendamento`,
       'Tem certeza que deseja cancelar esse agendamento?',
@@ -155,7 +165,7 @@ function Dashboard({isFocused, navigation}) {
           onPress: () => {},
           style: 'cancel',
         },
-        {text: 'Sim', onPress: () => handleCancel(id)},
+        {text: 'Sim', onPress: () => handleCancel(idAppointment)},
       ],
       {cancelable: false}
     );
