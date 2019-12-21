@@ -1,14 +1,14 @@
 import React, {useRef, useState} from 'react';
-import PropTypes from 'prop-types';
-import {useDispatch, useSelector} from 'react-redux';
 import {TouchableOpacity, Image} from 'react-native';
+import {useDispatch, useSelector} from 'react-redux';
+
+import PropTypes from 'prop-types';
 
 import logo from '~/assets/logo.png';
-import TermosCondicoes from '~/components/TermosCondicoes';
-
 import Background from '~/components/Background';
-import {signUpRequest} from '~/store/modules/auth/actions';
 import CheckBox from '~/components/CheckBox';
+import TermosCondicoes from '~/components/TermosCondicoes';
+import {signUpRequest} from '~/store/modules/auth/actions';
 
 import {
   Container,
@@ -26,7 +26,7 @@ export default function SignUp({navigation}) {
   const passwordRef = useRef();
 
   const loading = useSelector(state => state.user.loading);
-
+  const [isApproveButton] = useState(false);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -116,6 +116,9 @@ export default function SignUp({navigation}) {
         <TermosCondicoes
           toggleModal={toggleModal}
           isModalVisible={isModalVisible}
+          navigation={navigation}
+          privacy={privacy}
+          isApproveButton={isApproveButton}
         />
       </Container>
     </Background>

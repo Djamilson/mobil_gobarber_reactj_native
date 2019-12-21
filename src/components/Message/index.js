@@ -1,7 +1,7 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-
 import Icon from 'react-native-vector-icons/FontAwesome5';
+
+import PropTypes from 'prop-types';
 
 import {Container, Info, Name} from './styles';
 

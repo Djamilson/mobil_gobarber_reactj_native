@@ -1,10 +1,11 @@
 import React, {useRef, useState, useEffect} from 'react';
-import {useSelector, useDispatch} from 'react-redux';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import {useSelector, useDispatch} from 'react-redux';
 
 import Background from '~/components/Background';
-import {updateProfileRequest} from '~/store/modules/user/actions';
 import {signOut} from '~/store/modules/auth/actions';
+import {updateProfileRequest} from '~/store/modules/user/actions';
+
 import {
   Container,
   Title,

@@ -1,19 +1,20 @@
 import React, {useState} from 'react';
-import PropTypes from 'prop-types';
 import {TouchableOpacity} from 'react-native';
-
-import {useDispatch, useSelector} from 'react-redux';
-import Icon from 'react-native-vector-icons/FontAwesome5';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import Icon from 'react-native-vector-icons/FontAwesome5';
+import {useDispatch, useSelector} from 'react-redux';
+
+import PropTypes from 'prop-types';
 
 import Modal from '~/components/Modal';
-
 import TermosCondicoes from '~/components/TermosCondicoes';
-import {Container, Title, Icons, ButtonLogout} from './styles';
 import {signOut} from '~/store/modules/auth/actions';
+
+import {Container, Title, Icons, ButtonLogout} from './styles';
 
 export default function Header({title, navigation}) {
   const dispatch = useDispatch();
+  const [isApproveButton] = useState(true);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isModalVisiblePrivacy, setIsModalVisiblePrivacy] = useState(false);
   const [privacy] = useState(useSelector(state => state.user.profile.privacy));
@@ -58,6 +59,7 @@ export default function Header({title, navigation}) {
         isModalVisible={isModalVisiblePrivacy}
         navigation={navigation}
         privacy={privacy}
+        isApproveButton={isApproveButton}
       />
     </Container>
   );

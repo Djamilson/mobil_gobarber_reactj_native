@@ -1,9 +1,10 @@
 import React, {useRef, useState} from 'react';
-import PropTypes from 'prop-types';
 import {Image} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
-import logo from '~/assets/logo.png';
 
+import PropTypes from 'prop-types';
+
+import logo from '~/assets/logo.png';
 import Background from '~/components/Background';
 import {signInRequest} from '~/store/modules/auth/actions';
 

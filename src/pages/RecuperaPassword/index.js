@@ -1,13 +1,11 @@
 import React, {useRef, useState} from 'react';
-import PropTypes from 'prop-types';
-
 import {Image, Alert} from 'react-native';
 
-import api from '~/services/api';
+import PropTypes from 'prop-types';
 
 import logo from '~/assets/logo.png';
-
 import Background from '~/components/Background';
+import api from '~/services/api';
 
 import {
   Container,
@@ -21,11 +19,14 @@ import {
 export default function ResetPassword({navigation}) {
   const emailRef = useRef();
   const [email, setEmail] = useState('');
+  const [loading, setLoading] = useState(false);
 
   async function handleSubmit() {
+    setLoading(true);
     await api
       .post(`recuperarpassword/${email}`)
       .then(() => {
+        setLoading(false);
         navigation.navigate('SignIn');
         Alert.alert(
           'Sucesso',
@@ -33,6 +34,7 @@ export default function ResetPassword({navigation}) {
         );
       })
       .catch(error => {
+        setLoading(false);
         const str = error.toString();
         const final = str.replace(/\D/g, '');
 
@@ -63,7 +65,9 @@ export default function ResetPassword({navigation}) {
             onChangeText={setEmail}
           />
 
-          <SubmitButton onPress={handleSubmit}>Envair</SubmitButton>
+          <SubmitButton loading={loading} onPress={handleSubmit}>
+            Envair
+          </SubmitButton>
         </Form>
         <SignLink onPress={() => navigation.navigate('SignIn')}>
           <SignLinkText>Já tenho conta</SignLinkText>

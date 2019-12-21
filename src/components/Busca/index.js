@@ -1,7 +1,8 @@
 import React, {useState, useEffect} from 'react';
-import PropTypes from 'prop-types';
-import Icon from 'react-native-vector-icons/FontAwesome5';
 import RNPickerSelect from 'react-native-picker-select';
+import Icon from 'react-native-vector-icons/FontAwesome5';
+
+import PropTypes from 'prop-types';
 
 import Loading from '~/components/Loading';
 import Message from '~/components/Message';

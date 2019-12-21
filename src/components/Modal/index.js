@@ -1,7 +1,8 @@
 import React from 'react';
+import ModalReact from 'react-native-modal';
+
 import PropTypes from 'prop-types';
 
-import ModalReact from 'react-native-modal';
 import {
   Container,
   Footer,

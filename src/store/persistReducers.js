@@ -9,7 +9,7 @@ export default reducers => {
       storage: AsyncStorage,
       whitelist: ['auth', 'user'],
     },
-    reducers,
+    reducers
   );
 
   return persistedReducer;

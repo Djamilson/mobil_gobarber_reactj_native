@@ -1,15 +1,15 @@
 import React, {Component} from 'react';
-import {PersistGate} from 'redux-persist/integration/react';
-import {Provider} from 'react-redux';
 import {YellowBox, StatusBar} from 'react-native';
-
 import CodePush from 'react-native-code-push';
 import OneSignal from 'react-native-onesignal';
+import {Provider} from 'react-redux';
+
+import {PersistGate} from 'redux-persist/integration/react';
 
 import './config/ReactotronConfig';
 
-import {store, persistor} from './store';
 import App from './App';
+import {store, persistor} from './store';
 
 YellowBox.ignoreWarnings([
   'Warning: componentWillMount is deprecated',

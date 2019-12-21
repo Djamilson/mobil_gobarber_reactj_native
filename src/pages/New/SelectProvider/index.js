@@ -1,17 +1,16 @@
 import React, {useEffect, useState} from 'react';
-import {TouchableOpacity} from 'react-native';
+import {TouchableOpacity, Alert} from 'react-native';
+import IconGroupButton from 'react-native-vector-icons/FontAwesome';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+
 import PropTypes from 'prop-types';
 
-import Icon from 'react-native-vector-icons/MaterialIcons';
-import IconGroupButton from 'react-native-vector-icons/FontAwesome';
-
 import Background from '~/components/Background';
-import api from '~/services/api';
-
-import enumAppointments from '~/enum/appointments';
 import Busca from '~/components/Busca';
 import Loading from '~/components/Loading';
 import Message from '~/components/Message';
+import enumAppointments from '~/enum/appointments';
+import api from '~/services/api';
 
 import {
   Container,
@@ -46,6 +45,10 @@ export default function SelectProvider({navigation}) {
         setProviders(res.data);
       })
       .catch(() => {
+        Alert.alert(
+          'Atenção',
+          'Não foi possível carregar o item no momento, tente novamente!'
+        );
         setLoading(false);
       });
   }
@@ -99,6 +102,10 @@ export default function SelectProvider({navigation}) {
           setCompanySelect(value);
         })
         .catch(() => {
+          Alert.alert(
+            'Atenção',
+            'Não foi possível selecionar o item no momento, tente novamente!'
+          );
           setLoading(false);
         });
     } else {

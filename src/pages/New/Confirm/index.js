@@ -1,14 +1,14 @@
 import React, {useMemo} from 'react';
+import {TouchableOpacity, Alert} from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+
 import PropTypes from 'prop-types';
+
 import {formatRelative, parseISO} from 'date-fns';
 import pt from 'date-fns/locale/pt';
 
-import {TouchableOpacity} from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons';
-
-import api from '~/services/api';
-
 import Background from '~/components/Background';
+import api from '~/services/api';
 
 import {Container, Avatar, Name, Time, SubmitButton} from './styles';
 
@@ -34,9 +34,11 @@ export default function Confirm({navigation}) {
         status,
         agendar,
       })
-      .catch(error => {
-        // Your error is here!
-        // console.log('EEERRROU:::', error);
+      .catch(() => {
+        Alert.alert(
+          'Atenção',
+          'Não foi possível adicionar o item no momento, tente novamente!'
+        );
       });
 
     navigation.navigate('Dashboard');
