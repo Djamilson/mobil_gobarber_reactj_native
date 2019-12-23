@@ -1,7 +1,7 @@
 import styled from 'styled-components/native';
 
-import Input from '~/components/Input';
 import Button from '~/components/Button';
+import Input from '~/components/Input';
 
 export const Container = styled.SafeAreaView`
   flex: 1;
@@ -34,7 +34,12 @@ export const SubmitButton = styled(Button)`
   margin-top: 15px;
 `;
 
-export const LogoutButton = styled(Button)`
-  margin-top: 10px;
-  background: #f64c75;
+export const SignLink = styled.TouchableOpacity`
+  margin-top: 20px;
+`;
+
+export const SignLinkText = styled.Text`
+  color: #fff;
+  font-weight: bold;
+  font-size: 16;
 `;

@@ -54,6 +54,10 @@ export default function ActiveAccount({navigation}) {
     await AsyncStorage.removeItem('@emailgobarber');
   };
 
+  const saveStorage = async () => {
+    await AsyncStorage.setItem('@gobarberAtivo', 'true');
+  };
+
   function handlerSignIn() {
     navigation.navigate('SignIn');
   }
@@ -102,6 +106,7 @@ export default function ActiveAccount({navigation}) {
         navigation.navigate('SignIn');
         Alert.alert('Sucesso', `Conta ativada com sucesso!`);
         deleteEmailStorage();
+        saveStorage();
       })
       .catch(error => {
         setLoading(false);
@@ -131,7 +136,7 @@ export default function ActiveAccount({navigation}) {
         <Message nameIcon="exclamation-triangle" email={email} />
 
         <Image source={logo} />
-        <Name>Ativando a conta</Name>
+        <Name>Ativando sua conta</Name>
         <Form>
           <FormInput
             icon="lock-outline"

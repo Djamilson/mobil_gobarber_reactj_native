@@ -5,10 +5,11 @@ import {useDispatch, useSelector} from 'react-redux';
 import PropTypes from 'prop-types';
 
 import AsyncStorage from '@react-native-community/async-storage';
-import api from '~/services/api';
-import Loading from '~/components/Loading';
+
 import logo from '~/assets/logo.png';
 import Background from '~/components/Background';
+import Loading from '~/components/Loading';
+import api from '~/services/api';
 import {signInRequest} from '~/store/modules/auth/actions';
 
 import {
@@ -24,53 +25,46 @@ import {
 
 export default function SignIn({navigation}) {
   const dispatch = useDispatch();
-  const [loadingg, setLoadingg] = useState(false);
-  async function loadUser(email) {
-    setLoadingg(true);
-    await api
-      .get(`mobile/user/${email}`)
-      .then(res => {
-        setLoadingg(false);
-        console.log('Meu token:::: ', res.data);
-        const {is_verified} = res.data;
-        if (!is_verified) {
-          navigation.navigate('SignUpActive', {
-            email: emailgobarber,
-          });
-        }
-      })
-      .catch(error => {
-        setLoadingg(false);
-
-        console.log('Loade error:: ', error);
-
-        Alert.alert('Error', 'Gere um novo token, tente novamente!');
-        // }
-      });
-  }
-  useEffect(() => {
-    AsyncStorage.getItem('@forgetpassword').then(forgetpassword => {
-      console.log('AsyncStorege: ', forgetpassword);
-      if (forgetpassword) {
-        navigation.navigate('ForgetCodeReset', {
-          password: forgetpassword,
-        });
-      }
-    });
-
-    AsyncStorage.getItem('@emailgobarber').then(emailgobarber => {
-      console.log('AsyncStorege: ', emailgobarber);
-      if (emailgobarber) {
-        loadUser(emailgobarber);
-      }
-    });
-  }, [navigation]);
+  const loading = useSelector(state => state.auth.loading);
 
   const passwordRef = useRef();
+
+  const [loadingg, setLoadingg] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const loading = useSelector(state => state.auth.loading);
+  useEffect(() => {
+    AsyncStorage.getItem('@gobarberAtivo').then(gobarberAtivo => {
+      console.log('AsyncStorege: gobarberAtivo', gobarberAtivo);
+
+      if (!gobarberAtivo) {
+        AsyncStorage.getItem('@emailgobarber').then(async emailgobarber => {
+          console.log('AsyncStorege: Loggg ', emailgobarber);
+
+          if (emailgobarber) {
+            setLoadingg(true);
+            await api
+              .get(`mobile/user/${emailgobarber}`)
+              .then(res => {
+                setLoadingg(false);
+                console.log('Login Meu token:::: ', res.data);
+                const {is_verified} = res.data;
+                if (!is_verified) {
+                  navigation.navigate('SignUpActive', {
+                    email: emailgobarber,
+                  });
+                }
+              })
+              .catch(error => {
+                setLoadingg(false);
+
+                console.log('Login error:: ', error);
+              });
+          }
+        });
+      }
+    });
+  }, [navigation]);
 
   function navPageActiveCount() {
     navigation.navigate('SignUpActive', {

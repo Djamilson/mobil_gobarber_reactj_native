@@ -13,14 +13,14 @@ import {
   Title,
   Separator,
   Form,
+  SignLink,
+  SignLinkText,
   FormInput,
   SubmitButton,
 } from './styles';
 
-export default function ForgetPassword({navigation}) {
-  const email = navigation.getParam('email');
+export default function NewPassword({navigation}) {
   const token = navigation.getParam('token');
-
   const [loading, setLoading] = useState(false);
 
   const passwordRef = useRef();
@@ -37,9 +37,8 @@ export default function ForgetPassword({navigation}) {
   async function handleSubmit() {
     setLoading(true);
     await api
-      .put(`proccess_active_count/new_code_active`, {
+      .put(`forget/new_password`, {
         data: {
-          email,
           password,
           confirmPassword,
           token,
@@ -49,19 +48,42 @@ export default function ForgetPassword({navigation}) {
         setLoading(false);
         Alert.alert(
           'Sucesso',
-          `Novo token criando com sucesso, acesse sua conta de email para vê o código de ativação!`
+          `Senha redefinida com sucesso, acesse sua conta no GoBarber!`
         );
+        navigation.navigate('SignIn');
       })
       .catch(error => {
         setLoading(false);
         console.log('====>>>::', error);
         const str = error.toString();
         const final = str.replace(/\D/g, '');
+        if (final === '400') {
+          Alert.alert('Error', 'As senhas não conferem, tente novamente!');
+          return;
+        }
 
         if (final === '401' || final === '403') {
-          Alert.alert('Error', 'Não foi gerar novo token, tente novamente!');
+          Alert.alert('Error', 'Esse token não existe, crei um novo token!');
+          return;
         }
+
+        if (final === '404') {
+          Alert.alert(
+            'Error',
+            'Token inválido, já foi usado, crie novo Token!'
+          );
+          return;
+        }
+
+        Alert.alert(
+          'Error! ',
+          `Não foi possível redefinir a senha, tente novamente!`
+        );
       });
+  }
+
+  function handlerSignIn() {
+    navigation.navigate('SignIn');
   }
 
   return (
@@ -93,14 +115,19 @@ export default function ForgetPassword({navigation}) {
             onChangeText={setConfirmPassword}
           />
 
-          <SubmitButton onPress={handleSubmit}>Atualizar senha</SubmitButton>
+          <SubmitButton loading={loading} onPress={handleSubmit}>
+            Atualizar senha
+          </SubmitButton>
         </Form>
+        <SignLink onPress={handlerSignIn}>
+          <SignLinkText>Já tenho conta</SignLinkText>
+        </SignLink>
       </Container>
     </Background>
   );
 }
 
-ForgetPassword.propTypes = {
+NewPassword.propTypes = {
   navigation: PropTypes.shape({
     navigate: PropTypes.func.isRequired,
     getParam: PropTypes.func.isRequired,

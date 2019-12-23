@@ -10,8 +10,8 @@ import ProvideAdmin from '~/pages/DashboardAdmin';
 import FilaUser from '~/pages/Fila/FilaUser';
 import SelectProviderFila from '~/pages/Fila/SelectProvider';
 import ForgetCodeReset from '~/pages/ForgetPassword/CodeReset';
-import ForgetPassword from '~/pages/ForgetPassword/ForgetPassword';
 import ForgetFormEmail from '~/pages/ForgetPassword/FormEmail';
+import ForgetNewPassword from '~/pages/ForgetPassword/NewPassword';
 import Confirm from '~/pages/New/Confirm';
 import SelectDateTime from '~/pages/New/SelectDateTime';
 import SelectProvider from '~/pages/New/SelectProvider';
@@ -40,7 +40,7 @@ export default (isSigned = false, provider, acceped_regulation) =>
           SignUp,
           ForgetFormEmail,
           ForgetCodeReset,
-          ForgetPassword,
+          ForgetNewPassword,
           SignUpActive,
         }),
         RegulationReview: createSwitchNavigator({RegulationReview}),

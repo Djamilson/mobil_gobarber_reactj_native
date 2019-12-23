@@ -11,6 +11,7 @@ import {signFailure, signInSuccess} from './actions';
 const saveEmail = async email => {
   try {
     await AsyncStorage.setItem('@emailgobarber', email);
+    await AsyncStorage.setItem('@emailgobarber', 'false');
   } catch (error) {
     // Error retrieving data
     // console.log(error.message);

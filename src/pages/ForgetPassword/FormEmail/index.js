@@ -1,4 +1,4 @@
-import React, {useRef, useState} from 'react';
+import React, {useRef, useState, useEffect} from 'react';
 import {Image, Alert} from 'react-native';
 
 import PropTypes from 'prop-types';
@@ -22,6 +22,18 @@ export default function FormEmail({navigation}) {
   const emailRef = useRef();
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    AsyncStorage.getItem('@forgetpassword').then(forgetpassword => {
+      console.log('FormEmail ForgetPassowrd AsyncStorege: ', forgetpassword);
+      if (forgetpassword !== undefined && forgetpassword !== null) {
+        navigation.navigate('ForgetCodeReset', {
+          password: forgetpassword,
+          email: forgetpassword,
+        });
+      }
+    });
+  }, [navigation]);
 
   const saveEmail = async () => {
     await AsyncStorage.setItem('@forgetpassword', email);
