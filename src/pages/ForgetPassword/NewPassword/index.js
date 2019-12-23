@@ -1,6 +1,5 @@
 import React, {useRef, useState, useEffect} from 'react';
 import {Alert} from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import PropTypes from 'prop-types';
 

@@ -35,19 +35,14 @@ export default function SignIn({navigation}) {
 
   useEffect(() => {
     AsyncStorage.getItem('@gobarberAtivo').then(gobarberAtivo => {
-      console.log('AsyncStorege: gobarberAtivo', gobarberAtivo);
-
       if (!gobarberAtivo) {
         AsyncStorage.getItem('@emailgobarber').then(async emailgobarber => {
-          console.log('AsyncStorege: Loggg ', emailgobarber);
-
           if (emailgobarber) {
             setLoadingg(true);
             await api
               .get(`mobile/user/${emailgobarber}`)
               .then(res => {
                 setLoadingg(false);
-                console.log('Login Meu token:::: ', res.data);
                 const {is_verified} = res.data;
                 if (!is_verified) {
                   navigation.navigate('SignUpActive', {
@@ -55,10 +50,8 @@ export default function SignIn({navigation}) {
                   });
                 }
               })
-              .catch(error => {
+              .catch(() => {
                 setLoadingg(false);
-
-                console.log('Login error:: ', error);
               });
           }
         });
