@@ -54,7 +54,7 @@ export default function NewPassword({navigation}) {
       })
       .catch(error => {
         setLoading(false);
-        console.log('====>>>::', error);
+
         const str = error.toString();
         const final = str.replace(/\D/g, '');
         if (final === '400') {
