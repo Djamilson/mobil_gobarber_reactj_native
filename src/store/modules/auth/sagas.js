@@ -1,5 +1,6 @@
 import {Alert} from 'react-native';
 
+import AsyncStorage from '@react-native-community/async-storage';
 import {all, call, put, takeLatest} from 'redux-saga/effects';
 
 import api from '~/services/api';
@@ -7,10 +8,18 @@ import api from '~/services/api';
 import {signInFaileru, signUpSuccess} from '../user/actions';
 import {signFailure, signInSuccess} from './actions';
 
-export function* signIn({payload}) {
+const saveEmail = async email => {
   try {
-    const {email, password} = payload;
+    await AsyncStorage.setItem('@emailgobarber', email);
+  } catch (error) {
+    // Error retrieving data
+    // console.log(error.message);
+  }
+};
 
+export function* signIn({payload}) {
+  const {email, password, navPageActiveCount} = payload;
+  try {
     const response = yield call(api.post, 'sessions', {
       email,
       password,
@@ -58,8 +67,12 @@ export function* signIn({payload}) {
     if (final === '401') {
       Alert.alert(
         'Erro no login',
-        'Seu email ainda não foi validado, acesse sua conta de email e confirme a validação do acesso!'
+        'Sua conta ainda não foi validada, acesse seu email para vê o código de ativação!'
       );
+
+      saveEmail(email);
+      navPageActiveCount();
+
       yield put(signFailure());
       return;
     }
@@ -119,12 +132,18 @@ export function* signUp({payload}) {
       privacy,
     });
 
-    resetForm();
+    resetForm(); // navegação esta aqui nessa function
 
     Alert.alert(
       'Sucesso',
       `Cadastro efetuado, acesse o email ${email} para a tivar sua conta!`
     );
+
+    saveEmail(email); // save locaStorage
+
+    // AsyncStorage.setItem('@emailgobarber', email);
+    // AsyncStorage.setItem('user', email);
+
     yield put(signUpSuccess());
   } catch (error) {
     const str = error.toString();

@@ -19,7 +19,7 @@ import {
   SignLinkText,
 } from './styles';
 
-export default function SignUp({navigation}) {
+export default function CreateAccount({navigation}) {
   const dispatch = useDispatch();
 
   const emailRef = useRef();
@@ -46,7 +46,9 @@ export default function SignUp({navigation}) {
     setName('');
     setEmail('');
     setPassword('');
-    navigation.navigate('SignIn');
+    navigation.navigate('SignUpActive', {
+      email,
+    });
   }
 
   function handleSubmit() {
@@ -125,7 +127,7 @@ export default function SignUp({navigation}) {
   );
 }
 
-SignUp.propTypes = {
+CreateAccount.propTypes = {
   navigation: PropTypes.shape({
     navigate: PropTypes.func.isRequired,
   }).isRequired,

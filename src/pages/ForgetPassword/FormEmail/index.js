@@ -3,6 +3,8 @@ import {Image, Alert} from 'react-native';
 
 import PropTypes from 'prop-types';
 
+import AsyncStorage from '@react-native-community/async-storage';
+
 import logo from '~/assets/logo.png';
 import Background from '~/components/Background';
 import api from '~/services/api';
@@ -16,21 +18,31 @@ import {
   SignLinkText,
 } from './styles';
 
-export default function ResetPassword({navigation}) {
+export default function FormEmail({navigation}) {
   const emailRef = useRef();
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
 
+  const saveEmail = async () => {
+    await AsyncStorage.setItem('@forgetpassword', email);
+  };
+
   async function handleSubmit() {
     setLoading(true);
+
     await api
-      .post(`recuperarpassword/${email}`)
-      .then(() => {
+      .get(`forgetpassword/mobile/${email}`)
+      .then(res => {
         setLoading(false);
-        navigation.navigate('SignIn');
+        saveEmail();
+
+        navigation.navigate('ForgetCodeReset', {
+          email,
+        });
+
         Alert.alert(
           'Sucesso',
-          `Foi enviado instruções de recuperação de senha, para o email ${email}, acesse para criar nova senha!`
+          `Foi enviado o código para redefinição de senha para o email ${email}, acesse para criar nova senha!`
         );
       })
       .catch(error => {
@@ -77,7 +89,7 @@ export default function ResetPassword({navigation}) {
   );
 }
 
-ResetPassword.propTypes = {
+FormEmail.propTypes = {
   navigation: PropTypes.shape({
     navigate: PropTypes.func.isRequired,
   }).isRequired,
