@@ -9,14 +9,17 @@ import Dashboard from '~/pages/Dashboard';
 import ProvideAdmin from '~/pages/DashboardAdmin';
 import FilaUser from '~/pages/Fila/FilaUser';
 import SelectProviderFila from '~/pages/Fila/SelectProvider';
+import ForgetCodeReset from '~/pages/ForgetPassword/CodeReset';
+import ForgetPassword from '~/pages/ForgetPassword/ForgetPassword';
+import ForgetFormEmail from '~/pages/ForgetPassword/FormEmail';
 import Confirm from '~/pages/New/Confirm';
 import SelectDateTime from '~/pages/New/SelectDateTime';
 import SelectProvider from '~/pages/New/SelectProvider';
 import Profile from '~/pages/Profile';
-import ResetPassword from '~/pages/RecuperaPassword';
 import RegulationReview from '~/pages/RegulationRaview';
 import SignIn from '~/pages/SignIn';
-import SignUp from '~/pages/SignUp';
+import SignUpActive from '~/pages/SignUp/ActiveAccount';
+import SignUp from '~/pages/SignUp/CreateAccount';
 
 function getInitialRoute(isSigned, acceped_regulation) {
   if (isSigned) {
@@ -32,7 +35,14 @@ export default (isSigned = false, provider, acceped_regulation) =>
   createAppContainer(
     createSwitchNavigator(
       {
-        Sign: createSwitchNavigator({SignIn, SignUp, ResetPassword}),
+        Sign: createSwitchNavigator({
+          SignIn,
+          SignUp,
+          ForgetFormEmail,
+          ForgetCodeReset,
+          ForgetPassword,
+          SignUpActive,
+        }),
         RegulationReview: createSwitchNavigator({RegulationReview}),
         App: createBottomTabNavigator(
           provider
