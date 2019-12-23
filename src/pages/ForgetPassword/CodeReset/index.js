@@ -36,19 +36,22 @@ export default function CodeReset({navigation}) {
         .get(`mobile/valida_code_forget_password/${email}`)
         .then(res => {
           setLoading(false);
-          console.log('Meu token:::: ', res.data);
-          setToken(res.data.token);
+          console.log('Meu token:::: CodeReset ', res.data);
+          setToken(res.data);
         })
         .catch(error => {
           setLoading(false);
 
-          console.log('Error:::: ', error);
+          console.log('TETEE Error:::: ', error);
 
           // const str = error.toString();
           // const final = str.replace(/\D/g, '');
 
           // if (final === '401' || final === '403') {
-          Alert.alert('Error', 'Gere um novo token, tente novamente!');
+          Alert.alert(
+            'Error CodeReset',
+            'Gere um novo token, tente novamente!'
+          );
           // }
         });
     }
@@ -88,38 +91,27 @@ export default function CodeReset({navigation}) {
 
   async function handleValidateCodeReset() {
     setLoading(true);
-    await api
-      .put(`proccess_active_count`, {
-        data: {
-          token,
-          code_active,
-        },
-      })
-      .then(() => {
-        setLoading(false);
-        navigation.navigate('ForgetPassword', {email, token});
 
-        Alert.alert('Sucesso', `Conta ativada com sucesso!`);
-      })
-      .catch(error => {
-        setLoading(false);
-        console.log('====>>>::', error);
-        const str = error.toString();
-        const final = str.replace(/\D/g, '');
-        if (final === '400') {
-          Alert.alert(
-            'Error',
-            'Código de ativação incorreto, tente novamente!'
-          );
-        }
+    console.log('code_active', code_active);
+    console.log('code_active', typeof code_active);
 
-        if (final === '401' || final === '403') {
-          Alert.alert(
-            'Error',
-            'Não foi possível encontra um usuário, crie sua conta!'
-          );
-        }
-      });
+    console.log('===========', token);
+    console.log('token.code_active', token.code_active);
+
+    if (code_active === token.code_active) {
+      setLoading(false);
+      navigation.navigate('ForgetNewPassword', {token});
+
+      Alert.alert('Sucesso', `Agora redefina sua senha!`);
+      return;
+    }
+
+    setLoading(false);
+
+    Alert.alert(
+      'Atenção! ',
+      `Código de validação incorreto, tente novamente, ou crie novo código!`
+    );
   }
 
   return (
