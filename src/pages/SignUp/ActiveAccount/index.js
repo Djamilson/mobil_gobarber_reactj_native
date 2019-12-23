@@ -32,19 +32,15 @@ export default function ActiveAccount({navigation}) {
 
   useEffect(() => {
     async function loadToken() {
-      console.log('email entrada:::: ', email);
       setLoading(true);
       await api
         .get(`mobile/active_count/${email}`)
         .then(res => {
           setLoading(false);
-          console.log('Meu token:::: ', res.data);
           setToken(res.data.token);
         })
-        .catch(error => {
+        .catch(() => {
           setLoading(false);
-
-          console.log('Error:::: ', error);
         });
     }
     loadToken();
@@ -79,7 +75,6 @@ export default function ActiveAccount({navigation}) {
       })
       .catch(error => {
         setLoading(false);
-        console.log('====>>>::', error);
         const str = error.toString();
         const final = str.replace(/\D/g, '');
 
@@ -110,7 +105,6 @@ export default function ActiveAccount({navigation}) {
       })
       .catch(error => {
         setLoading(false);
-        console.log('====>>>::', error);
         const str = error.toString();
         const final = str.replace(/\D/g, '');
         if (final === '400') {

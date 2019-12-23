@@ -25,7 +25,6 @@ export default function FormEmail({navigation}) {
 
   useEffect(() => {
     AsyncStorage.getItem('@forgetpassword').then(forgetpassword => {
-      console.log('FormEmail ForgetPassowrd AsyncStorege: ', forgetpassword);
       if (forgetpassword !== undefined && forgetpassword !== null) {
         navigation.navigate('ForgetCodeReset', {
           password: forgetpassword,
@@ -44,7 +43,7 @@ export default function FormEmail({navigation}) {
 
     await api
       .get(`forgetpassword/mobile/${email}`)
-      .then(res => {
+      .then(() => {
         setLoading(false);
         saveEmail();
 

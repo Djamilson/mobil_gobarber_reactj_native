@@ -9,13 +9,8 @@ import {signInFaileru, signUpSuccess} from '../user/actions';
 import {signFailure, signInSuccess} from './actions';
 
 const saveEmail = async email => {
-  try {
-    await AsyncStorage.setItem('@emailgobarber', email);
-    await AsyncStorage.setItem('@emailgobarber', 'false');
-  } catch (error) {
-    // Error retrieving data
-    // console.log(error.message);
-  }
+  await AsyncStorage.setItem('@emailgobarber', email);
+  await AsyncStorage.setItem('@emailgobarber', 'false');
 };
 
 export function* signIn({payload}) {
@@ -206,7 +201,6 @@ export function* acceptRegulationUp({payload}) {
     Alert.alert('Sucesso', 'Os termos não foram aceitos!');
     navigate('RegulationReview');
   } catch (error) {
-    // console.log('ERRRRRo::', error);
     Alert.alert(
       'Error',
       'Não foi possível aceitar os termos, tente novamente!'

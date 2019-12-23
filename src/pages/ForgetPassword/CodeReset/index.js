@@ -30,24 +30,16 @@ export default function CodeReset({navigation}) {
 
   useEffect(() => {
     async function loadToken() {
-      console.log('Code Reset email entrada:::: ', email);
       setLoading(true);
       await api
         .get(`mobile/valida_code_forget_password/${email}`)
         .then(res => {
           setLoading(false);
-          console.log('Meu token:::: CodeReset ', res.data);
           setToken(res.data);
         })
-        .catch(error => {
+        .catch(() => {
           setLoading(false);
 
-          console.log('TETEE Error:::: ', error);
-
-          // const str = error.toString();
-          // const final = str.replace(/\D/g, '');
-
-          // if (final === '401' || final === '403') {
           Alert.alert(
             'Error CodeReset',
             'Gere um novo token, tente novamente!'
@@ -79,7 +71,6 @@ export default function CodeReset({navigation}) {
       })
       .catch(error => {
         setLoading(false);
-        console.log('====>>>::', error);
         const str = error.toString();
         const final = str.replace(/\D/g, '');
 
@@ -91,12 +82,6 @@ export default function CodeReset({navigation}) {
 
   async function handleValidateCodeReset() {
     setLoading(true);
-
-    console.log('code_active', code_active);
-    console.log('code_active', typeof code_active);
-
-    console.log('===========', token);
-    console.log('token.code_active', token.code_active);
 
     if (code_active === token.code_active) {
       setLoading(false);
