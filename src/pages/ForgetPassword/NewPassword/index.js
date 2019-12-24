@@ -1,8 +1,12 @@
 import React, {useRef, useState, useEffect} from 'react';
-import {Alert} from 'react-native';
+import {Alert, Image} from 'react-native';
+import {useDispatch} from 'react-redux';
 
 import PropTypes from 'prop-types';
 
+import AsyncStorage from '@react-native-community/async-storage';
+
+import logo from '~/assets/logo.png';
 import Background from '~/components/Background';
 import Loading from '~/components/Loading';
 import api from '~/services/api';
@@ -33,6 +37,10 @@ export default function NewPassword({navigation}) {
     setConfirmPassword('');
   }, []);
 
+  const deleteEmailStorage = async () => {
+    await AsyncStorage.removeItem('@forgetpassword');
+  };
+
   async function handleSubmit() {
     setLoading(true);
     await api
@@ -49,10 +57,15 @@ export default function NewPassword({navigation}) {
           'Sucesso',
           `Senha redefinida com sucesso, acesse sua conta no GoBarber!`
         );
+
+        deleteEmailStorage();
+
         navigation.navigate('SignIn');
       })
       .catch(error => {
         setLoading(false);
+
+        console.log('EERRRR:', error);
 
         const str = error.toString();
         const final = str.replace(/\D/g, '');
@@ -88,8 +101,10 @@ export default function NewPassword({navigation}) {
   return (
     <Background>
       <Container>
-        <Title>Redefina a senha</Title>
         {loading && <Loading loading={loading}>Carregando ...</Loading>}
+        <Image source={logo} />
+
+        <Title>Redefina a senha</Title>
         <Form>
           <FormInput
             icon="lock-outline"
@@ -101,7 +116,6 @@ export default function NewPassword({navigation}) {
             value={password}
             onChangeText={setPassword}
           />
-          <Separator />
 
           <FormInput
             icon="lock-outline"
@@ -113,11 +127,13 @@ export default function NewPassword({navigation}) {
             value={confirmPassword}
             onChangeText={setConfirmPassword}
           />
+          <Separator />
 
           <SubmitButton loading={loading} onPress={handleSubmit}>
             Atualizar senha
           </SubmitButton>
         </Form>
+
         <SignLink onPress={handlerSignIn}>
           <SignLinkText>Já tenho conta</SignLinkText>
         </SignLink>

@@ -29,6 +29,7 @@ export default function CodeReset({navigation}) {
   const [token, setToken] = useState('');
 
   useEffect(() => {
+    setCode_active('');
     async function loadToken() {
       setLoading(true);
       await api
@@ -36,13 +37,14 @@ export default function CodeReset({navigation}) {
         .then(res => {
           setLoading(false);
           setToken(res.data);
+          console.log('>>>', res.data);
         })
         .catch(() => {
           setLoading(false);
 
           Alert.alert(
-            'Error CodeReset',
-            'Gere um novo token, tente novamente!'
+            'Error',
+            'Gere um novo código de ativação, tente novamente!'
           );
           // }
         });
@@ -55,6 +57,7 @@ export default function CodeReset({navigation}) {
   }
 
   async function newCodeActive() {
+    setCode_active('');
     setLoading(true);
     await api
       .put(`proccess_active_count/new_code_active`, {
@@ -62,11 +65,13 @@ export default function CodeReset({navigation}) {
           email,
         },
       })
-      .then(() => {
+      .then(res => {
         setLoading(false);
+        setToken(res.data);
+        console.log('New Código:', res.data);
         Alert.alert(
           'Sucesso',
-          `Novo token criando com sucesso, acesse sua conta de email para vê o código de ativação!`
+          `Novo código criando com sucesso, acesse sua conta de email para vê o código de ativação!`
         );
       })
       .catch(error => {
@@ -82,7 +87,9 @@ export default function CodeReset({navigation}) {
 
   async function handleValidateCodeReset() {
     setLoading(true);
+    console.log('===', code_active);
 
+    console.log('===', token);
     if (code_active === token.code_active) {
       setLoading(false);
       navigation.navigate('ForgetNewPassword', {token});

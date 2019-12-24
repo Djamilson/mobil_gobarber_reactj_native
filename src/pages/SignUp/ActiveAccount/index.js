@@ -30,6 +30,10 @@ export default function ActiveAccount({navigation}) {
   const [loading, setLoading] = useState(false);
   const [token, setToken] = useState('');
 
+  function handlerSignIn() {
+    navigation.navigate('SignIn');
+  }
+
   useEffect(() => {
     async function loadToken() {
       setLoading(true);
@@ -37,14 +41,26 @@ export default function ActiveAccount({navigation}) {
         .get(`mobile/active_count/${email}`)
         .then(res => {
           setLoading(false);
+          console.log('Token::', res.data);
           setToken(res.data.token);
         })
-        .catch(() => {
+        .catch(error => {
           setLoading(false);
+
+          const str = error.toString();
+          const final = str.replace(/\D/g, '');
+
+          if (final === '401') {
+            navigation.navigate('SignIn');
+            Alert.alert(
+              'Atenção!',
+              'Esse email já esta ativo, acesse sua conta!'
+            );
+          }
         });
     }
     loadToken();
-  }, [email]);
+  }, [email, navigation]);
 
   const deleteEmailStorage = async () => {
     await AsyncStorage.removeItem('@emailgobarber');
@@ -54,10 +70,6 @@ export default function ActiveAccount({navigation}) {
     await AsyncStorage.setItem('@gobarberAtivo', 'true');
   };
 
-  function handlerSignIn() {
-    navigation.navigate('SignIn');
-  }
-
   async function newCodeActive() {
     setLoading(true);
     await api
@@ -66,11 +78,13 @@ export default function ActiveAccount({navigation}) {
           email,
         },
       })
-      .then(() => {
+      .then(res => {
         setLoading(false);
+        setToken(res.data);
+        console.log('New Código:', res.data);
         Alert.alert(
           'Sucesso',
-          `Novo token criando com sucesso, acesse sua conta de email para vê o código de ativação!`
+          `Novo código criando com sucesso, acesse seu email para vê o código de ativação!`
         );
       })
       .catch(error => {
@@ -79,10 +93,7 @@ export default function ActiveAccount({navigation}) {
         const final = str.replace(/\D/g, '');
 
         if (final === '401' || final === '403') {
-          Alert.alert(
-            'Error',
-            'Não foi possível finalizar essa operação, tente novamente!'
-          );
+          Alert.alert('Error', 'Gerar um novo código, tente novamente!');
         }
       });
   }
@@ -92,22 +103,31 @@ export default function ActiveAccount({navigation}) {
     await api
       .put(`proccess_active_count`, {
         data: {
-          token,
+          email,
           code_active,
         },
       })
       .then(() => {
         setLoading(false);
-        navigation.navigate('SignIn');
+        handlerSignIn();
         Alert.alert('Sucesso', `Conta ativada com sucesso!`);
         deleteEmailStorage();
         saveStorage();
       })
       .catch(error => {
         setLoading(false);
+        setCode_active('');
         const str = error.toString();
         const final = str.replace(/\D/g, '');
+        console.log('===> ', error);
         if (final === '400') {
+          Alert.alert(
+            'Error',
+            'Código de ativação incorreto, crie um novo código ou tente novamente!'
+          );
+        }
+
+        if (final === '402') {
           Alert.alert(
             'Error',
             'Código de ativação incorreto, tente novamente!'

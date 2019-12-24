@@ -1,6 +1,7 @@
 import Reactotron from 'reactotron-react-native';
 import {reactotronRedux} from 'reactotron-redux';
 import reactotronSaga from 'reactotron-redux-saga';
+
 import localhostConfig from './host';
 
 if (__DEV__) {
